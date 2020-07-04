@@ -2,6 +2,7 @@
 #include "gl_widget.hpp"
 
 #include <iostream>
+#include <fstream>
 
 #include "fox/counter.hpp"
 #include "fox/gfx/model_loader_obj.hpp"
@@ -37,6 +38,13 @@ void gl_widget::initializeGL()
 	initializeOpenGLFunctions();
 
 	print_opengl_error();
+
+	printf("GL_VENDOR: %s\n", glGetString(GL_VENDOR));
+	printf("GL_RENDERER: %s\n", glGetString(GL_RENDERER));
+	printf("GL_VERSION: %s\n", glGetString(GL_VERSION));
+	printf("GL_SHADING_LANGUAGE_VERSION: %s\n",
+		glGetString(GL_SHADING_LANGUAGE_VERSION));
+	//printf("Extensions : %s\n", glGetString(GL_EXTENSIONS));
 
 	fast_vertex_vbo = 0;
 	fast_normal_vbo = 0;
@@ -96,78 +104,36 @@ void gl_widget::initializeGL()
 
 	print_opengl_error();
 
-	char vert_file[256], frag_file[256];
-	//snprintf(vert_file, 256, "%s/shaders/phong_v460.vert", data_root.c_str());
-	//snprintf(frag_file, 256, "%s/shaders/phong_v460.frag", data_root.c_str());
+	//std::string vert_file_name = data_root + "/shaders/phong_v460.vert";
+	//std::string frag_file_name = data_root + "/shaders/phong_v460.frag";
 
-	//snprintf(vert_file, 256, "%s/shaders/gouraud_v460.vert", data_root.c_str());
-	//snprintf(frag_file, 256, "%s/shaders/gouraud_v460.frag", data_root.c_str());
+	//std::string vert_file_name = data_root + "/shaders/gouraud_v460.vert";
+	//std::string frag_file_name = data_root + "/shaders/gouraud_v460.frag";
 
-	snprintf(vert_file, 256, "%s/shaders/gouraud_half_vector_v460.vert", data_root.c_str());
-	snprintf(frag_file, 256, "%s/shaders/gouraud_half_vector_v460.frag", data_root.c_str());
+	std::string vert_file_name = data_root + "/shaders/gouraud_half_vector_v460.vert";
+	std::string frag_file_name = data_root + "/shaders/gouraud_half_vector_v460.frag";
 
-	FILE *v, *f;
-	char *vert, *frag;
-	int fsize, vsize, result;
+	std::ifstream v_f;
+	std::ifstream f_f;
 
-	v = fopen(vert_file, "rt");
-	if(v == NULL)
+	v_f.open(vert_file_name, std::ios::in | std::ios::binary);
+	if(!v_f.is_open())
 	{
-		printf("ERROR couldn't open vertex shader file %s\n", vert_file);
-		return;
+		std::cerr << "Failed to open file: " << vert_file_name << std::endl;
+		exit(-1);
 	}
-
-	f = fopen(frag_file, "rt");
-	if(f == NULL)
+	std::string vert_s;
+	vert_s.assign(std::istreambuf_iterator<char>(v_f), std::istreambuf_iterator<char>());
+	
+	f_f.open(frag_file_name, std::ios::in | std::ios::binary);
+	if(!f_f.is_open())
 	{
-		printf("ERROR couldn't open vertex shader file %s\n", frag_file);
-		return;
+		std::cerr << "Failed to open file: " << frag_file_name << std::endl;
+		exit(-1);
 	}
-
-	// find the file size
-	fseek(v, 0, SEEK_END);
-	vsize = ftell(v);
-	rewind(v);
-
-	fseek(f, 0, SEEK_END);
-	fsize = ftell(f);
-	rewind(f);
-
-	vert = (char *)malloc(sizeof(char) * vsize);
-	frag = (char *)malloc(sizeof(char) * fsize);
-
-	// read the file
-	result = (int)fread(vert, sizeof(char), vsize, v);
-	vert[vsize - 1] = '\0';
-	if(result != vsize)
-	{
-		printf("ERROR: loading shader: %s\n", vert_file);
-		printf("Expected %d bytes but only read %d\n", vsize, result);
-
-		fclose(f);
-		fclose(v);
-		free(vert);
-		free(frag);
-		return;
-	}
-
-	result = (int)fread(frag, sizeof(char), fsize, f);
-	frag[fsize - 1] = '\0';
-	if(result != fsize)
-	{
-		printf("ERROR: loading shader: %s\n", frag_file);
-		printf("Expected %d bytes but only read %d\n", fsize, result);
-
-		fclose(f);
-		fclose(v);
-		free(vert);
-		free(frag);
-		return;
-	}
-
-	fclose(f);
-	fclose(v);
-
+	std::string frag_s;
+	frag_s.assign(std::istreambuf_iterator<char>(f_f), std::istreambuf_iterator<char>());
+	
 	int length = 0, chars_written = 0;
 	char *info_log;
 
@@ -179,7 +145,6 @@ void gl_widget::initializeGL()
 		return;
 	}
 
-	std::string vert_s = vert;
 	const char *vert_c = vert_s.c_str();
 	glShaderSource(vertex_shader_id, 1, &vert_c, NULL);
 	glCompileShader(vertex_shader_id);
@@ -193,7 +158,6 @@ void gl_widget::initializeGL()
 		return;
 	}
 
-	std::string frag_s = frag;
 	const char *frag_c = frag_s.c_str();
 	glShaderSource(fragment_shader_id, 1, &frag_c, NULL);
 	glCompileShader(fragment_shader_id);
@@ -235,9 +199,6 @@ void gl_widget::initializeGL()
 
 		free(info_log);
 	}
-
-	free(vert);
-	free(frag);
 
 	glUseProgram(shader_id);
 	vertex_location = glGetAttribLocation(shader_id, "vertex_position");

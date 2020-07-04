@@ -13,16 +13,24 @@ include_directories("common-cpp")
 
 # cmake .. -G "Visual Studio 16 2019" -A x64
 if(MSVC)
-	#set(CMAKE_PREFIX_PATH "C:\\vclibs\\vclibs")
-	#set(CMAKE_INCLUDE_PATH "C:\\vclibs\\vclibs\\include")
-	#set(CMAKE_LIBRARY_PATH "C:\\vclibs\\vclibs\\lib")
-	ADD_DEFINITIONS(-D_SCL_SECURE_NO_WARNINGS)
-	ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE)
-	ADD_DEFINITIONS(-D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS)
+	set(CMAKE_PREFIX_PATH "C:\\vclibs\\vclibs")
+	set(CMAKE_INCLUDE_PATH "C:\\vclibs\\vclibs\\include")
+	set(CMAKE_LIBRARY_PATH "C:\\vclibs\\vclibs\\lib")
 	
-	SET(CMAKE_C_FLAGS "/MP ${CMAKE_C_FLAGS}")
-	SET(CMAKE_CXX_FLAGS "/MP /std:c++17 /Oi ${CMAKE_CXX_FLAGS}")
+	SET(CMAKE_C_FLAGS "/MP /arch:AVX2 ${CMAKE_C_FLAGS}")
+	SET(CMAKE_CXX_FLAGS "/MP /std:c++17 /Oi /arch:AVX2 ${CMAKE_CXX_FLAGS}")
 	
+	find_package(OpenGL REQUIRED)
+	find_library(OPENGL_LIBRARY NAMES OpenGL32 opengl32)
+
+	set(Boost_USE_STATIC_LIBS OFF )
+	set(Boost_USE_MULTITHREADED ON)
+	set(Boost_USE_STATIC_RUNTIME OFF)
+	
+	find_package(Boost COMPONENTS program_options system filesystem REQUIRED)
+	include_directories(${Boost_INCLUDE_DIRS})
+	set(BOOST_LIBS ${Boost_LIBRARIES})
+
 	find_package(Qt5Core)
 	find_package(Qt5Widgets)
 	find_package(Qt5Gui)
@@ -32,7 +40,7 @@ if(MSVC)
 	
 	set(LIBS ${LIBS} kernel32.lib)
 	
-	set(RENDERER_LIBS ${RENDERER_LIBS} ${LIBS} opengl32.lib glu32.lib)
+	set(RENDERER_LIBS ${RENDERER_LIBS} ${LIBS} ${OPENGL_LIBRARY})
 	
 	include_directories("C:\\vclibs\\vclibs\\include")
 endif(MSVC)
@@ -49,16 +57,16 @@ if(MINGW OR MSYS OR UNIX)
 	endif(UNIX AND NOT APPLE)
 	
 	if(UNIX AND NOT APPLE)
+		find_package(OpenGL REQUIRED)
+		find_library(OPENGL_LIBRARY NAMES OpenGL)
 		set(LIBS ${LIBS})
-		set(RENDERER_LIBS ${RENDERER_LIBS} -lOpenGL -lGLU)
-	elseif(MINGW OR MSYS)
-		set(LIBS ${LIBS} -lmingw32)
-		set(RENDERER_LIBS ${RENDERER_LIBS} -lmingw32 -lopengl32 -lglu32)
-	endif(UNIX AND NOT APPLE)
-	
-	if(UNIX AND NOT APPLE)
+		set(RENDERER_LIBS ${RENDERER_LIBS} ${LIBS} ${OPENGL_LIBRARY})
 		# QT_DIR should already be defined
 	elseif(MINGW OR MSYS)
+		find_package(OpenGL REQUIRED)
+		find_library(OPENGL_LIBRARY NAMES OpenGL32 opengl32)
+		set(LIBS ${LIBS} -lmingw32)
+		set(RENDERER_LIBS ${RENDERER_LIBS} ${LIBS} ${OPENGL_LIBRARY})
 		set(QT_DIR "c:/msys64/mingw64")
 	endif(UNIX AND NOT APPLE)
 
@@ -75,9 +83,12 @@ if(MINGW OR MSYS OR UNIX)
 		include_directories("c:/msys64/mingw64/include")
 		include_directories("c:/msys64/mingw64/include/eigen3")
 	endif(UNIX AND NOT APPLE)
+
+	find_package(Boost COMPONENTS program_options system filesystem REQUIRED)
+	include_directories(${Boost_INCLUDE_DIRS})
 	
-	set(CMAKE_C_FLAGS_RELEASE "-Ofast")
-	set(CMAKE_CXX_FLAGS_RELEASE "-Ofast")
+	set(CMAKE_C_FLAGS_RELEASE "-Ofast -mavx2")
+	set(CMAKE_CXX_FLAGS_RELEASE "-Ofast -mavx2")
 	
 	# WARNING: warnings are disabled
 	set(CMAKE_C_FLAGS_DEBUG "-ggdb3 -Og")
@@ -128,7 +139,3 @@ MESSAGE( STATUS "MINGW: " ${MINGW} )
 MESSAGE( STATUS "MSYS: " ${MSYS} )
 MESSAGE( STATUS "MSVC: " ${MSVC} )
 MESSAGE( STATUS "APPLE: " ${APPLE} )
-get_target_property(QtCore_location Qt5::Core LOCATION)
-MESSAGE( STATUS "QtCore_location: " ${QtCore_location})
-get_target_property(QtWdigets_location Qt5::Widgets LOCATION)
-MESSAGE( STATUS "QtWdigets_location: " ${QtWdigets_location})
