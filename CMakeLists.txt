@@ -73,6 +73,7 @@ if(MINGW OR MSYS OR UNIX)
 	elseif(MINGW OR MSYS)
 		set(QT_LIBS Qt5::Core Qt5::Widgets Qt5::Gui Qt5::OpenGL)
 		include_directories("c:/msys64/mingw64/include")
+		include_directories("c:/msys64/mingw64/include/eigen3")
 	endif(UNIX AND NOT APPLE)
 	
 	set(CMAKE_C_FLAGS_RELEASE "-Ofast")
