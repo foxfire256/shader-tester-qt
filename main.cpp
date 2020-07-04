@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 	// set the OpenGL version
 	format.setRenderableType(QSurfaceFormat::OpenGL);
 	format.setMajorVersion(4);
-	format.setMinorVersion(1);
+	format.setMinorVersion(6);
 	// QSurfaceFormat::CompatibilityProfile
 	// QSurfaceFormat::CoreProfile
 	format.setProfile(QSurfaceFormat::CoreProfile);

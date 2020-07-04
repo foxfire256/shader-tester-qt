@@ -26,10 +26,9 @@ if(MSVC)
 	find_package(Qt5Core)
 	find_package(Qt5Widgets)
 	find_package(Qt5Gui)
-	find_package(Qt53DCore)
 	find_package(Qt5OpenGL)
 	
-	set(QT_LIBS Qt5::Core Qt5::Widgets Qt5::Gui Qt5::3DCore Qt5::OpenGL)
+	set(QT_LIBS Qt5::Core Qt5::Widgets Qt5::Gui Qt5::OpenGL)
 	
 	set(LIBS ${LIBS} kernel32.lib)
 	
@@ -66,14 +65,13 @@ if(MINGW OR MSYS OR UNIX)
 	find_package(Qt5Core)
 	find_package(Qt5Widgets)
 	find_package(Qt5Gui)
-	find_package(Qt53DCore)
 	find_package(Qt5OpenGL)
 	
 	if(UNIX AND NOT APPLE)
-		set(QT_LIBS Qt5::Core Qt5::Widgets Qt5::Gui Qt5::3DCore Qt5::OpenGL)
+		set(QT_LIBS Qt5::Core Qt5::Widgets Qt5::Gui Qt5::OpenGL)
 		include_directories("/usr/include")
 	elseif(MINGW OR MSYS)
-		set(QT_LIBS Qt5::Core Qt5::Widgets Qt5::Gui Qt5::3DCore Qt5::OpenGL)
+		set(QT_LIBS Qt5::Core Qt5::Widgets Qt5::Gui Qt5::OpenGL)
 		include_directories("c:/msys64/mingw64/include")
 	endif(UNIX AND NOT APPLE)
 	
@@ -101,6 +99,10 @@ set(MAIN_SOURCE
 	main_window.cpp
 	gl_widget.hpp
 	gl_widget.cpp
+	common-cpp/fox/counter.hpp
+	common-cpp/fox/counter.cpp
+	common-cpp/fox/gfx/model_loader_obj.hpp
+	common-cpp/fox/gfx/model_loader_obj.cpp
 )
 
 # static libraries don't work so well on Apple for some reason
