@@ -103,6 +103,10 @@ set(MAIN_SOURCE
 	common-cpp/fox/counter.cpp
 	common-cpp/fox/gfx/model_loader_obj.hpp
 	common-cpp/fox/gfx/model_loader_obj.cpp
+	common-cpp/fox/gfx/eigen_opengl.hpp
+	common-cpp/fox/gfx/eigen_opengl.cpp
+	common-cpp/fox/gfx/opengl_error_checker.h
+	common-cpp/fox/gfx/opengl_error_checker.c
 )
 
 # static libraries don't work so well on Apple for some reason
