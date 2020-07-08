@@ -4,10 +4,20 @@
 #include <iostream>
 #include <fstream>
 
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/range/iterator_range.hpp>
+
 #include "fox/counter.hpp"
 #include "fox/gfx/model_loader_obj.hpp"
 #include "fox/gfx/eigen_opengl.hpp"
 #include "fox/gfx/opengl_error_checker.h"
+
+#include "shader_program.hpp"
+#include "shader.hpp"
+#include "mesh.hpp"
+#include "uniform.hpp"
 
 #if defined(_WIN32) || defined(_WIN64)
 	std::string data_root = "C:/dev/model-viewer-data";
@@ -15,8 +25,9 @@
 	std::string data_root = std::string(getenv("HOME")) + "/dev/model-viewer-data";
 #endif
 
-gl_widget::gl_widget(QWidget *parent) : QOpenGLWidget(parent)
+gl_widget::gl_widget(const std::string &config_file, QWidget *parent) : QOpenGLWidget(parent)
 {
+	this->config_file = config_file;
 	render_time = 0.0;
 	frames = framerate = 0;
 	fps_counter = new fox::counter();
@@ -64,6 +75,86 @@ void gl_widget::initializeGL()
 	glGenVertexArrays(1, &default_vao);
 	glBindVertexArray(default_vao);
 #endif
+
+	namespace bpt = boost::property_tree;
+	bpt::ptree pt;
+	try
+	{
+		bpt::read_xml(config_file, pt, bpt::xml_parser::trim_whitespace);
+	}
+	catch(const bpt::ptree_error &e)
+	{
+		std::cerr << "ERROR in: " << __FILE__ << ": at line " << __LINE__
+			<< std::endl;
+		std::cerr << e.what() << std::endl;
+		std::cerr << "Can't open file: " << config_file << std::endl;
+		exit(-1);
+	}
+
+	for(bpt::ptree::value_type &v : pt.get_child("meshes"))
+	{
+		mesh *m = nullptr;
+		try
+		{
+			m = new mesh();
+			m->name = v.second.get<std::string>("name");
+			m->file_name = v.second.get<std::string>("file_name");
+			m->windows_path = v.second.get<std::string>("windows_path");
+			m->linux_path = v.second.get<std::string>("linux_path");
+
+		}
+		catch(const bpt::ptree_error &e)
+		{
+			std::cerr << "ERROR in: " << __FILE__ << ": at line " << __LINE__
+				<< std::endl;
+			std::cerr << e.what() << std::endl;
+			exit(-1);
+		}
+
+		// WARNING: only load one mesh
+		this->m = std::make_shared<mesh *>(m);
+	}
+
+	for(bpt::ptree::value_type &v : pt.get_child("shader_programs"))
+	{
+		shader_program *sp = nullptr;
+		try
+		{
+			sp = new shader_program();
+			sp->name = v.second.get<std::string>("name");
+			sp->vertex_location = v.second.get<GLint>("vertex_location");
+			sp->normal_location = v.second.get<GLint>("normal_location");
+
+			for(bpt::ptree::value_type &v2 : v.second.get_child("shaders"))
+			{
+				shader *s = new shader();
+				s->type = v2.second.get<std::string>("type");
+				s->file_name = v2.second.get<std::string>("file_name");
+				s->windows_path = v2.second.get<std::string>("windows_path");
+				s->linux_path = v2.second.get<std::string>("linux_path");
+				sp->shaders.emplace(std::make_shared<shader *>(s));
+			}
+
+			for(bpt::ptree::value_type &v2 : v.second.get_child("uniforms"))
+			{
+				uniform *u = new uniform();
+				u->name = v2.second.get<std::string>("name");
+				u->data_type = v2.second.get<std::string>("data_type");
+				u->initial_value = v2.second.get<std::string>("initial_value");
+				sp->uniforms.emplace(std::make_shared<uniform *>(u));
+			}
+		}
+		catch(const bpt::ptree_error &e)
+		{
+			std::cerr << "ERROR in: " << __FILE__ << ": at line " << __LINE__
+				<< std::endl;
+			std::cerr << e.what() << std::endl;
+			exit(-1);
+		}
+
+		// WARNING: only have one shader program in the config file
+		this->sp = std::make_shared<shader_program *>(sp);
+	}
 
 	trans = { 0.0f, 0.0f, 0.0f };
 	rot = { 0.0f, 0.0f, 0.0f };

@@ -11,6 +11,7 @@
 class shader
 {
 public:
+	shader() = default;
 	std::string type;
 	std::string file_name;
 	std::string windows_path;

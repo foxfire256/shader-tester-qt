@@ -119,6 +119,10 @@ set(MAIN_SOURCE
 	common-cpp/fox/gfx/eigen_opengl.cpp
 	common-cpp/fox/gfx/opengl_error_checker.h
 	common-cpp/fox/gfx/opengl_error_checker.c
+	mesh.hpp
+	shader.hpp
+	shader_program.hpp
+	uniform.hpp
 )
 
 # static libraries don't work so well on Apple for some reason
@@ -127,7 +131,7 @@ set(LIBRARY_TYPE STATIC)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 add_executable(${PROJECT_NAME} ${MAIN_SOURCE} ${COMMON_SOURCE} )
-target_link_libraries(${PROJECT_NAME} ${QT_LIBS} ${RENDERER_LIBS})
+target_link_libraries(${PROJECT_NAME} ${QT_LIBS} ${RENDERER_LIBS} ${BOOST_LIBS})
 set(CMAKE_AUTORCC OFF)
 set(CMAKE_AUTOMOC OFF)
 

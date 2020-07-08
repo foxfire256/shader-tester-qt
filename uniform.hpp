@@ -7,6 +7,7 @@
 class uniform
 {
 public:
+	uniform() = default;
 	std::string name;
 	// currently only 1f, vec3, vec4
 	std::string data_type;

@@ -1,10 +1,16 @@
 #ifndef GL_WIDGET_HPP
 #define GL_WIDGET_HPP
 
+#include <string>
+#include <memory>
+
 #include <QOpenGLWidget>
 #include <QOpenGLExtraFunctions>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
+
+class shader_program;
+class mesh;
 
 namespace fox
 {
@@ -19,7 +25,8 @@ class gl_widget : public QOpenGLWidget, protected QOpenGLExtraFunctions
 {
 	Q_OBJECT
 public:
-	gl_widget(QWidget *parent = nullptr);
+	gl_widget(QWidget *parent = nullptr) = delete;
+	gl_widget(const std::string &config_file, QWidget *parent = nullptr);
 	virtual ~gl_widget() override;
 
 public slots:
@@ -39,10 +46,14 @@ protected:
 	void print_shader_info_log(GLuint shader_id);
 
 private:
+	std::string config_file;
 	int w, h;
 	fox::counter *fps_counter;
 	double render_time;
 	int frames, framerate;
+
+	std::shared_ptr<mesh *> m;
+	std::shared_ptr<shader_program *> sp;
 
 	fox::gfx::model_loader_obj *obj;
 
@@ -81,4 +92,4 @@ private:
 	float rot_vel;
 };
 
-#endif // GL_WIDGET_HPP
+#endif

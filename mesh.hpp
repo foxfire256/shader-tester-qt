@@ -11,6 +11,7 @@
 class mesh
 {
 public:
+	mesh() = default;
 	std::string name;
 	std::string file_name;
 	std::string windows_path;

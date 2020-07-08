@@ -1,6 +1,7 @@
 #ifndef MAIN_WINDOW_HPP
 #define MAIN_WINDOW_HPP
 
+#include <string>
 #include <QMainWindow>
 
 class QTimer;
@@ -16,13 +17,17 @@ class main_window : public QMainWindow
 	Q_OBJECT
 
 public:
-	main_window(QWidget *parent = nullptr);
+	main_window(QWidget *parent = nullptr) = delete;
+	main_window(int win_w, int win_h, const std::string &config_file, QWidget *parent = nullptr);
 	virtual ~main_window();
 
 public slots:
 	void update_fps(int fps);
 
 private:
+	int win_w;
+	int win_h;
+	std::string config_file;
 	gl_widget *glw;
 	QTimer *gfx_timer;
 	QHBoxLayout *main_layout;

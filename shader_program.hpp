@@ -10,15 +10,19 @@
 #endif
 #include <GL/gl.h>
 
+class shader;
+class uniform;
+
 class shader_program
 {
 public:
+	shader_program() = default;
 	std::string name;
 	GLuint program_id;
 	GLint vertex_location;
 	GLint normal_location;
-	std::set<std::string, std::shared_ptr<shader *>> shaders;
-	std::set<std::string, std::shared_ptr<uniform *>> uniforms;
+	std::set<std::shared_ptr<shader *>> shaders;
+	std::set<std::shared_ptr<uniform *>> uniforms;
 };
 
 #endif
