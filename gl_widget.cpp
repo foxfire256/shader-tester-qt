@@ -34,48 +34,6 @@ gl_widget::gl_widget(const std::string &config_file, QWidget *parent) : QOpenGLW
 	update_counter = new fox::counter();
 	obj = nullptr;
 
-	rot_vel = 16.0f;
-}
-
-gl_widget::~gl_widget()
-{
-	delete fps_counter;
-	delete update_counter;
-	delete obj;
-}
-
-void gl_widget::initializeGL()
-{
-	initializeOpenGLFunctions();
-
-	print_opengl_error();
-
-	printf("GL_VENDOR: %s\n", glGetString(GL_VENDOR));
-	printf("GL_RENDERER: %s\n", glGetString(GL_RENDERER));
-	printf("GL_VERSION: %s\n", glGetString(GL_VERSION));
-	printf("GL_SHADING_LANGUAGE_VERSION: %s\n",
-		glGetString(GL_SHADING_LANGUAGE_VERSION));
-	//printf("Extensions : %s\n", glGetString(GL_EXTENSIONS));
-
-	fast_vertex_vbo = 0;
-	fast_normal_vbo = 0;
-
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
-	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_BLEND); // enable alpha channel
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glEnable(GL_POLYGON_SMOOTH);
-	glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
-
-	// HACK: to get around GLES 2.0 not supporting VAOs and OpenGL 3.2 core
-	// requiring one to be bound to use VBOs
-#ifndef USING_GLES2
-	glGenVertexArrays(1, &default_vao);
-	glBindVertexArray(default_vao);
-#endif
-
 	namespace bpt = boost::property_tree;
 	bpt::ptree pt;
 	try
@@ -155,6 +113,48 @@ void gl_widget::initializeGL()
 		// WARNING: only have one shader program in the config file
 		this->sp = std::make_shared<shader_program *>(sp);
 	}
+
+	rot_vel = 16.0f;
+}
+
+gl_widget::~gl_widget()
+{
+	delete fps_counter;
+	delete update_counter;
+	delete obj;
+}
+
+void gl_widget::initializeGL()
+{
+	initializeOpenGLFunctions();
+
+	print_opengl_error();
+
+	printf("GL_VENDOR: %s\n", glGetString(GL_VENDOR));
+	printf("GL_RENDERER: %s\n", glGetString(GL_RENDERER));
+	printf("GL_VERSION: %s\n", glGetString(GL_VERSION));
+	printf("GL_SHADING_LANGUAGE_VERSION: %s\n",
+		glGetString(GL_SHADING_LANGUAGE_VERSION));
+	//printf("Extensions : %s\n", glGetString(GL_EXTENSIONS));
+
+	fast_vertex_vbo = 0;
+	fast_normal_vbo = 0;
+
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND); // enable alpha channel
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glEnable(GL_POLYGON_SMOOTH);
+	glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+
+	// HACK: to get around GLES 2.0 not supporting VAOs and OpenGL 3.2 core
+	// requiring one to be bound to use VBOs
+#ifndef USING_GLES2
+	glGenVertexArrays(1, &default_vao);
+	glBindVertexArray(default_vao);
+#endif
 
 	trans = { 0.0f, 0.0f, 0.0f };
 	rot = { 0.0f, 0.0f, 0.0f };

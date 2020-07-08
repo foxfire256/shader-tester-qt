@@ -29,11 +29,10 @@ public:
 	gl_widget(const std::string &config_file, QWidget *parent = nullptr);
 	virtual ~gl_widget() override;
 
+	std::shared_ptr<mesh *> m;
+	std::shared_ptr<shader_program *> sp;
+
 public slots:
-	/**
-	 * @brief Update the scene
-	 */
-	void animate(){}
 
 signals:
 	void update_fps(int fps);
@@ -51,9 +50,6 @@ private:
 	fox::counter *fps_counter;
 	double render_time;
 	int frames, framerate;
-
-	std::shared_ptr<mesh *> m;
-	std::shared_ptr<shader_program *> sp;
 
 	fox::gfx::model_loader_obj *obj;
 

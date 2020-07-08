@@ -39,8 +39,8 @@ int main(int argc, char *argv[])
 	std::string config_file = "";
 #endif
 
-	int win_w = 800;
-	int win_h = 600;
+	int win_w = 1280;
+	int win_h = 768;
 
 	std::cout << "Using Boost "
 		// major version

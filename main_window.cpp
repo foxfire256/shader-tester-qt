@@ -8,6 +8,7 @@
 #include <QPushButton>
 #include <QLabel>
 
+#include "key_handler.hpp"
 #include "gl_widget.hpp"
 
 //------------------------------------------------------------------------------
@@ -51,7 +52,11 @@ main_window::main_window(int win_w, int win_h, const std::string &config_file,
 	main_layout->addItem(right_layout);
 
 	this->setCentralWidget(main_widget);
-	this->resize(768, 768);
+	this->resize(win_w, win_h);
+
+	kh = new key_handler(this);
+	this->installEventFilter(kh);
+	connect(kh, &key_handler::quit, this, &main_window::quit);
 
 	connect(glw, &gl_widget::update_fps, this, &main_window::update_fps);
 }
@@ -60,6 +65,13 @@ main_window::main_window(int win_w, int win_h, const std::string &config_file,
 main_window::~main_window()
 {
 	delete glw;
+	delete kh;
+}
+
+//------------------------------------------------------------------------------
+void main_window::quit()
+{
+	this->close();
 }
 
 //------------------------------------------------------------------------------

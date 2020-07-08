@@ -111,6 +111,8 @@ set(MAIN_SOURCE
 	main_window.cpp
 	gl_widget.hpp
 	gl_widget.cpp
+	key_handler.hpp
+	key_handler.cpp
 	common-cpp/fox/counter.hpp
 	common-cpp/fox/counter.cpp
 	common-cpp/fox/gfx/model_loader_obj.hpp
