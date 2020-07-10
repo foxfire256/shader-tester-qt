@@ -124,6 +124,21 @@ gl_widget::~gl_widget()
 	delete obj;
 }
 
+void gl_widget::uniform_changed_1f(const std::string &name, float u)
+{
+
+}
+
+void gl_widget::uniform_changed_3fv(const std::string &name, std::array<float, 3> u)
+{
+
+}
+
+void gl_widget::uniform_changed_4fv(const std::string &name, std::array<float, 4> u)
+{
+
+}
+
 void gl_widget::initializeGL()
 {
 	initializeOpenGLFunctions();

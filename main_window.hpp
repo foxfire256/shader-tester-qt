@@ -2,6 +2,8 @@
 #define MAIN_WINDOW_HPP
 
 #include <string>
+#include <memory>
+#include <list>
 #include <QMainWindow>
 
 class QTimer;
@@ -37,6 +39,8 @@ private:
 	QVBoxLayout *right_layout;
 	QLabel *fps_lbl;
 	QWidget *main_widget;
+
+	std::list<std::shared_ptr<QWidget *>> uniform_widgets;
 };
 
 #endif

@@ -7,9 +7,15 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QLabel>
+#include <QLineEdit>
 
 #include "key_handler.hpp"
 #include "gl_widget.hpp"
+
+#include "shader_program.hpp"
+#include "shader.hpp"
+#include "mesh.hpp"
+#include "uniform.hpp"
 
 //------------------------------------------------------------------------------
 main_window::main_window(int win_w, int win_h, const std::string &config_file, 
@@ -47,6 +53,43 @@ main_window::main_window(int win_w, int win_h, const std::string &config_file,
 
 	right_layout->addWidget(fps_lbl);
 	right_layout->addStretch();
+
+	for(auto &u : (*(glw->sp))->uniforms)
+	{
+		if((*u)->data_type == "1f")
+		{
+			float f0;
+			try
+			{
+				f0 = std::stof((*u)->initial_value);
+			}
+			catch(const std::exception &e)
+			{
+				std::cerr << "Error: " << e.what() << std::endl;
+				std::cerr << "Failed to convert " << (*u)->initial_value << " to float" << std::endl;
+				exit(-1);
+			}
+
+			glw->u1f.emplace(std::make_pair((*u)->name, f0));
+
+			QLabel *lbl = new QLabel((*u)->name.c_str(), this);
+			lbl->setSizePolicy(right_size_policy);
+			QLineEdit *le = new QLineEdit((*u)->initial_value.c_str(), this);
+			le->setSizePolicy(right_size_policy);
+			QHBoxLayout *lt = new QHBoxLayout();
+			lt->addWidget(lbl);
+			lt->addWidget(le);
+			right_layout->addItem(lt);
+		}
+		else if((*u)->data_type == "vec3")
+		{
+
+		}
+		else if((*u)->data_type == "vec4")
+		{
+
+		}
+	}
 
 	main_layout->addWidget(glw);
 	main_layout->addItem(right_layout);

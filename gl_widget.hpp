@@ -3,6 +3,8 @@
 
 #include <string>
 #include <memory>
+#include <unordered_map>
+#include <array>
 
 #include <QOpenGLWidget>
 #include <QOpenGLExtraFunctions>
@@ -32,7 +34,14 @@ public:
 	std::shared_ptr<mesh *> m;
 	std::shared_ptr<shader_program *> sp;
 
+	std::unordered_map<std::string, float> u1f;
+	std::unordered_map<std::string, std::array<float, 3>> u3fv;
+	std::unordered_map<std::string, std::array<float, 4>> u4fv;
+
 public slots:
+	void uniform_changed_1f(const std::string &name, float u);
+	void uniform_changed_3fv(const std::string &name, std::array<float, 3> u);
+	void uniform_changed_4fv(const std::string &name, std::array<float, 4> u);
 
 signals:
 	void update_fps(int fps);
