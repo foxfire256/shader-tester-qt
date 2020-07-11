@@ -3,7 +3,7 @@
 #define SHADER_PROGRAM_HPP
 
 #include <string>
-#include <set>
+#include <list>
 #include <memory>
 #if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
@@ -21,8 +21,8 @@ public:
 	GLuint program_id;
 	GLint vertex_location;
 	GLint normal_location;
-	std::set<std::shared_ptr<shader *>> shaders;
-	std::set<std::shared_ptr<uniform *>> uniforms;
+	std::list<std::shared_ptr<shader *>> shaders;
+	std::list<std::shared_ptr<uniform *>> uniforms;
 };
 
 #endif

@@ -39,9 +39,9 @@ public:
 	std::unordered_map<std::string, std::array<float, 4>> u4fv;
 
 public slots:
-	void uniform_changed_1f(const std::string &name, float u);
-	void uniform_changed_3fv(const std::string &name, std::array<float, 3> u);
-	void uniform_changed_4fv(const std::string &name, std::array<float, 4> u);
+	void uniform_changed_1f(const std::string &name, QString s);
+	void uniform_changed_3fv(const std::string &name, int index, QString s);
+	void uniform_changed_4fv(const std::string &name, int index, QString s);
 
 signals:
 	void update_fps(int fps);

@@ -1,10 +1,14 @@
 #include "main_window.hpp"
 
+#include <array>
 #include <iostream>
+#include <sstream>
+#include <string>
 
 #include <QTimer>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QGridLayout>
 #include <QPushButton>
 #include <QLabel>
 #include <QLineEdit>
@@ -42,6 +46,9 @@ main_window::main_window(int win_w, int win_h, const std::string &config_file,
 	QSizePolicy right_size_policy;
 	right_size_policy = QSizePolicy(QSizePolicy::Minimum,
 		QSizePolicy::Minimum);
+	QSizePolicy right_size_policy2;
+	right_size_policy2 = QSizePolicy(QSizePolicy::Ignored,
+		QSizePolicy::Minimum);
 
 	main_widget = new QWidget(this);
 
@@ -53,6 +60,8 @@ main_window::main_window(int win_w, int win_h, const std::string &config_file,
 
 	right_layout->addWidget(fps_lbl);
 	right_layout->addStretch();
+
+	int line_edit_width = 50;
 
 	for(auto &u : (*(glw->sp))->uniforms)
 	{
@@ -75,19 +84,125 @@ main_window::main_window(int win_w, int win_h, const std::string &config_file,
 			QLabel *lbl = new QLabel((*u)->name.c_str(), this);
 			lbl->setSizePolicy(right_size_policy);
 			QLineEdit *le = new QLineEdit((*u)->initial_value.c_str(), this);
-			le->setSizePolicy(right_size_policy);
+			le->setSizePolicy(right_size_policy2);
+			le->setMinimumWidth(line_edit_width);
 			QHBoxLayout *lt = new QHBoxLayout();
 			lt->addWidget(lbl);
 			lt->addWidget(le);
 			right_layout->addItem(lt);
+
+			std::string name = (*u)->name;
+
+			connect(le, &QLineEdit::editingFinished,
+				[=]() {this->glw->uniform_changed_1f(name, le->text()); });
 		}
 		else if((*u)->data_type == "vec3")
 		{
+			int i = 0;
+			std::stringstream ss((*u)->initial_value);
+			std::array<std::string, 3> s;
+			std::array<float, 3> f;
+			while(std::getline(ss, s[i], ','))
+			{
+				try
+				{
+					f[i] = std::stof(s[i]);
+				}
+				catch(const std::exception &e)
+				{
+					std::cerr << "Error: " << e.what() << std::endl;
+					std::cerr << "Failed to convert " << s[i] << " to float" << std::endl;
+					exit(-1);
+				}
+				i++;
+				if(i >= 3)
+					break;
+			}
+			glw->u3fv.emplace(std::make_pair((*u)->name, f));
 
+			QLabel *lbl = new QLabel((*u)->name.c_str(), this);
+			lbl->setSizePolicy(right_size_policy);
+			QLineEdit *le0 = new QLineEdit(s[0].c_str(), this);
+			le0->setSizePolicy(right_size_policy2);
+			le0->setMinimumWidth(line_edit_width);
+			QLineEdit *le1 = new QLineEdit(s[1].c_str(), this);
+			le1->setSizePolicy(right_size_policy2);
+			le1->setMinimumWidth(line_edit_width);
+			QLineEdit *le2 = new QLineEdit(s[2].c_str(), this);
+			le2->setSizePolicy(right_size_policy2);
+			le2->setMinimumWidth(line_edit_width);
+			QGridLayout *lt = new QGridLayout();
+			lt->addWidget(lbl, 0, 0, 1, 3);
+			lt->addWidget(le0, 1, 0);
+			lt->addWidget(le1, 1, 1);
+			lt->addWidget(le2, 1, 2);
+			right_layout->addItem(lt);
+
+			std::string name = (*u)->name;
+
+			connect(le0, &QLineEdit::editingFinished,
+				[=]() {this->glw->uniform_changed_3fv(name, 0, le0->text()); });
+			connect(le1, &QLineEdit::editingFinished,
+				[=]() {this->glw->uniform_changed_3fv(name, 1, le1->text()); });
+			connect(le2, &QLineEdit::editingFinished,
+				[=]() {this->glw->uniform_changed_3fv(name, 2, le2->text()); });
 		}
 		else if((*u)->data_type == "vec4")
 		{
+			int i = 0;
+			std::stringstream ss((*u)->initial_value);
+			std::array<std::string, 4> s;
+			std::array<float, 4> f;
+			while(std::getline(ss, s[i], ','))
+			{
+				try
+				{
+					f[i] = std::stof(s[i]);
+				}
+				catch(const std::exception &e)
+				{
+					std::cerr << "Error: " << e.what() << std::endl;
+					std::cerr << "Failed to convert " << s[i] << " to float" << std::endl;
+					exit(-1);
+				}
+				i++;
+				if(i >= 4)
+					break;
+			}
+			glw->u4fv.emplace(std::make_pair((*u)->name, f));
 
+			QLabel *lbl = new QLabel((*u)->name.c_str(), this);
+			lbl->setSizePolicy(right_size_policy);
+			QLineEdit *le0 = new QLineEdit(s[0].c_str(), this);
+			le0->setSizePolicy(right_size_policy2);
+			le0->setMinimumWidth(line_edit_width);
+			QLineEdit *le1 = new QLineEdit(s[1].c_str(), this);
+			le1->setSizePolicy(right_size_policy2);
+			le1->setMinimumWidth(line_edit_width);
+			QLineEdit *le2 = new QLineEdit(s[2].c_str(), this);
+			le2->setSizePolicy(right_size_policy2);
+			le2->setMinimumWidth(line_edit_width);
+			QLineEdit *le3 = new QLineEdit(s[3].c_str(), this);
+			le3->setSizePolicy(right_size_policy2);
+			le3->setMinimumWidth(line_edit_width);
+			QGridLayout *lt = new QGridLayout();
+			lt->addWidget(lbl, 0, 0, 1, 4);
+			lt->addWidget(le0, 1, 0);
+			lt->addWidget(le1, 1, 1);
+			lt->addWidget(le2, 1, 2);
+			lt->addWidget(le3, 1, 3);
+			right_layout->addItem(lt);
+
+			std::string name = (*u)->name;
+
+			connect(le0, &QLineEdit::editingFinished,
+				[=]() {this->glw->uniform_changed_4fv(name, 0, le0->text()); });
+			connect(le1, &QLineEdit::editingFinished,
+				[=]() {this->glw->uniform_changed_4fv(name, 1, le1->text()); });
+			connect(le2, &QLineEdit::editingFinished,
+				[=]() {this->glw->uniform_changed_4fv(name, 2, le2->text()); });
+			connect(le3, &QLineEdit::editingFinished,
+				[=]() {this->glw->uniform_changed_4fv(name, 4, le3->text()); });
 		}
 	}
 

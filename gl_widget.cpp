@@ -90,7 +90,7 @@ gl_widget::gl_widget(const std::string &config_file, QWidget *parent) : QOpenGLW
 				s->file_name = v2.second.get<std::string>("file_name");
 				s->windows_path = v2.second.get<std::string>("windows_path");
 				s->linux_path = v2.second.get<std::string>("linux_path");
-				sp->shaders.emplace(std::make_shared<shader *>(s));
+				sp->shaders.push_back(std::make_shared<shader *>(s));
 			}
 
 			for(bpt::ptree::value_type &v2 : v.second.get_child("uniforms"))
@@ -99,7 +99,7 @@ gl_widget::gl_widget(const std::string &config_file, QWidget *parent) : QOpenGLW
 				u->name = v2.second.get<std::string>("name");
 				u->data_type = v2.second.get<std::string>("data_type");
 				u->initial_value = v2.second.get<std::string>("initial_value");
-				sp->uniforms.emplace(std::make_shared<uniform *>(u));
+				sp->uniforms.push_back(std::make_shared<uniform *>(u));
 			}
 		}
 		catch(const bpt::ptree_error &e)
@@ -124,19 +124,81 @@ gl_widget::~gl_widget()
 	delete obj;
 }
 
-void gl_widget::uniform_changed_1f(const std::string &name, float u)
+void gl_widget::uniform_changed_1f(const std::string &name, QString s)
 {
+	std::string s2(s.toStdString());
+	
+	float f;
+	try
+	{
+		f = std::stof(s2);
+	}
+	catch(const std::exception &e)
+	{
+		std::cerr << "Error: " << e.what() << std::endl;
+		std::cerr << "Failed to convert " << s2 << " to float" << std::endl;
+		return;
+	}
 
+	u1f[name] = f;
+
+	print_opengl_error();
+	glUseProgram(shader_id);
+	int u = glGetUniformLocation(shader_id, name.c_str());
+	glUniform1f(u, f);
+	print_opengl_error();
 }
 
-void gl_widget::uniform_changed_3fv(const std::string &name, std::array<float, 3> u)
+void gl_widget::uniform_changed_3fv(const std::string &name, int index, QString s)
 {
+	std::string s2(s.toStdString());
+	
+	float f;
+	try
+	{
+		f = std::stof(s2);
+	}
+	catch(const std::exception &e)
+	{
+		std::cerr << "Error: " << e.what() << std::endl;
+		std::cerr << "Failed to convert " << s2 << " to float" << std::endl;
+		return;
+	}
+	
+	auto &a = u3fv[name];
+	a[index] = f;
 
+	print_opengl_error();
+	glUseProgram(shader_id);
+	int u = glGetUniformLocation(shader_id, name.c_str());
+	glUniform3fv(u, 1, a.data());
+	print_opengl_error();
 }
 
-void gl_widget::uniform_changed_4fv(const std::string &name, std::array<float, 4> u)
+void gl_widget::uniform_changed_4fv(const std::string &name, int index, QString s)
 {
+	std::string s2(s.toStdString());
 
+	float f;
+	try
+	{
+		f = std::stof(s2);
+	}
+	catch(const std::exception &e)
+	{
+		std::cerr << "Error: " << e.what() << std::endl;
+		std::cerr << "Failed to convert " << s2 << " to float" << std::endl;
+		return;
+	}
+
+	auto &a = u4fv[name];
+	a[index] = f;
+
+	print_opengl_error();
+	glUseProgram(shader_id);
+	int u = glGetUniformLocation(shader_id, name.c_str());
+	glUniform4fv(u, 1, a.data());
+	print_opengl_error();
 }
 
 void gl_widget::initializeGL()
@@ -182,13 +244,15 @@ void gl_widget::initializeGL()
 
 	// initialize some defaults
 	color = Eigen::Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
+	/*
 	La = Eigen::Vector3f(1.0f, 1.0f, 1.0f);
 	Ls = Eigen::Vector3f(1.0f, 1.0f, 1.0f);
 	Ld = Eigen::Vector3f(1.0f, 1.0f, 1.0f);
+	*/
 	rot = Eigen::Vector3f(0.0f, 0.0f, 0.0f);
 	trans = Eigen::Vector3f(0.0f, 0.0f, 0.0f);
 	scale = 1.0f;
-	light_pos = Eigen::Vector4f(eye[0], eye[1], eye[2], 1.0f);
+	//light_pos = Eigen::Vector4f(eye[0], eye[1], eye[2], 1.0f);
 	M = Eigen::Matrix4f::Identity();
 	fox::gfx::perspective(65.0f, (float)w / (float)h, 0.01f, 40.0f, P);
 
@@ -310,6 +374,7 @@ void gl_widget::initializeGL()
 	vertex_location = glGetAttribLocation(shader_id, "vertex_position");
 	normal_location = glGetAttribLocation(shader_id, "vertex_normal");
 
+	/*
 	int u = glGetUniformLocation(shader_id, "light_pos");
 	glUniform4fv(u, 1, light_pos.data());
 	u = glGetUniformLocation(shader_id, "La");
@@ -318,8 +383,8 @@ void gl_widget::initializeGL()
 	glUniform3fv(u, 1, Ls.data());
 	u = glGetUniformLocation(shader_id, "Ld");
 	glUniform3fv(u, 1, Ld.data());
-
-	u = glGetUniformLocation(shader_id, "color");
+	*/
+	int u = glGetUniformLocation(shader_id, "color");
 	glUniform4fv(u, 1, color.data());
 
 	u = glGetUniformLocation(shader_id, "MVP");
@@ -348,6 +413,7 @@ void gl_widget::initializeGL()
 
 	print_opengl_error();
 
+	/*
 	Ka = Eigen::Vector3f(0.3f, 0.3f, 0.3f);
 	Ks = Eigen::Vector3f(0.1f, 0.1f, 0.1f);
 	Kd = Eigen::Vector3f(0.6f, 0.6f, 0.6f);
@@ -361,6 +427,24 @@ void gl_widget::initializeGL()
 	glUniform3fv(u, 1, Kd.data());
 	u = glGetUniformLocation(shader_id, "shininess");
 	glUniform1f(u, shininess);
+	*/
+	for(auto i : u1f)
+	{
+		int u = glGetUniformLocation(shader_id, i.first.c_str());
+		glUniform1f(u, i.second);
+	}
+
+	for(auto i : u3fv)
+	{
+		int u = glGetUniformLocation(shader_id, i.first.c_str());
+		glUniform3fv(u, 1, i.second.data());
+	}
+
+	for(auto i : u4fv)
+	{
+		int u = glGetUniformLocation(shader_id, i.first.c_str());
+		glUniform4fv(u, 1, i.second.data());
+	}
 
 	print_opengl_error();
 
