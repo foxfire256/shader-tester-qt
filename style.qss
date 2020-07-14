@@ -1,0 +1,46 @@
+
+/* http://doc.qt.io/qt-5/stylesheet-reference.html */
+QPushButton
+{
+	color: white;
+	background-color: #252526;
+	border: 2px solid rgb(104, 104, 104);
+	border-radius: 4px;
+	padding: 2px;
+}
+QLineEdit
+{
+	color: white;
+	background-color: #252526;
+	border: 2px solid rgb(104, 104, 104);
+	border-radius: 4px;
+	padding: 2px;
+}
+QComboBox
+{
+	color: white;
+	selection-color: white;
+	background-color: #252526;
+	border: 2px solid rgb(104, 104, 104);
+	border-radius: 4px;
+	padding: 2px;
+}
+QComboBox QAbstractItemView
+{
+	color: white;
+}
+QSpinBox
+{
+	color: white;
+	background-color: #252526;
+	border: 2px solid rgb(104, 104, 104);
+	border-radius: 4px;
+	padding: 2px;
+}
+QLabel { color: white; }
+QMainWindow { background-color: #333337; }
+QWidget { background-color: #333337; }
+QSplitter::handle {
+	background-color: rgb(104, 104, 104);
+}
+

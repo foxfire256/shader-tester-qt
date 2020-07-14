@@ -108,12 +108,10 @@ int main(int argc, char *argv[])
 	fnt.setBold(true);
 	QApplication::setFont(fnt);
 
-	/*
-	QFile file(":/style.qss");
+	QFile file("C:/dev/shader-tester-qt/style.qss");
 	file.open(QFile::ReadOnly);
 	QString style_sheet = QLatin1String(file.readAll());
 	a.setStyleSheet(style_sheet);
-	*/
 
 	// https://doc.qt.io/qt-5/qsurfaceformat.html
 	QSurfaceFormat format;
