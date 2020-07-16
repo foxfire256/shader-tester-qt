@@ -35,8 +35,8 @@ int main(int argc, char *argv[])
 
 #if defined(_WIN32) || defined(_WIN64)
 	std::string config_file = "C:/dev/shader-tester-qt/scene.xml";
-#elif
-	std::string config_file = "";
+#else
+	std::string config_file = "/home/foxfire/dev/shader-tester-qt/scene.xml";
 #endif
 
 	int win_w = 1280;
@@ -53,11 +53,14 @@ int main(int argc, char *argv[])
 		<< BOOST_VERSION % 100
 		<< std::endl;
 
+    // this does not work in Linux (openSUSE) as of 2020-07-16
+#if defined(_WIN32) || defined(_WIN64)
 	namespace po = boost::program_options;
 
+    po::variables_map vm;
+    
 	// parse command line
 	po::options_description desc("Command line options");
-	po::variables_map vm;
 
 	// WTF how does this work?
 	desc.add_options()
@@ -87,6 +90,7 @@ int main(int argc, char *argv[])
 	{
 		config_file = vm["config-file"].as<std::string>();
 	}
+#endif
 
 	// this does not work on Linux for some reason
 	/*
@@ -107,8 +111,11 @@ int main(int argc, char *argv[])
 	fnt.setPointSize(11);
 	fnt.setBold(true);
 	QApplication::setFont(fnt);
-
+#if defined(_WIN32) || defined(_WIN64)
 	QFile file("C:/dev/shader-tester-qt/style.qss");
+#else
+	QFile file("/home/foxfire/dev/shader-tester-qt/style.qss");
+#endif
 	file.open(QFile::ReadOnly);
 	QString style_sheet = QLatin1String(file.readAll());
 	a.setStyleSheet(style_sheet);
