@@ -57,6 +57,7 @@ if(MINGW OR MSYS OR UNIX)
 	endif(UNIX AND NOT APPLE)
 	
 	if(UNIX AND NOT APPLE)
+        set(OpenGL_GL_PREFERENCE GLVND)
 		find_package(OpenGL REQUIRED)
 		find_library(OPENGL_LIBRARY NAMES OpenGL)
 		set(LIBS ${LIBS})
