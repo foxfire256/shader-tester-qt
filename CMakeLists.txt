@@ -88,6 +88,7 @@ if(MINGW OR MSYS OR UNIX)
 
 	find_package(Boost COMPONENTS program_options system filesystem REQUIRED)
 	include_directories(${Boost_INCLUDE_DIRS})
+	set(BOOST_LIBS ${Boost_LIBRARIES})
 	
 	set(CMAKE_C_FLAGS_RELEASE "-Ofast -mavx2")
 	set(CMAKE_CXX_FLAGS_RELEASE "-Ofast -mavx2")
