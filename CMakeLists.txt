@@ -13,9 +13,9 @@ include_directories("common-cpp")
 
 # cmake .. -G "Visual Studio 16 2019" -A x64
 if(MSVC)
-	set(CMAKE_PREFIX_PATH "C:\\vclibs\\vclibs")
-	set(CMAKE_INCLUDE_PATH "C:\\vclibs\\vclibs\\include")
-	set(CMAKE_LIBRARY_PATH "C:\\vclibs\\vclibs\\lib")
+	set(CMAKE_PREFIX_PATH "C:\\usr\\vclibs")
+	set(CMAKE_INCLUDE_PATH "C:\\usr\\vclibs\\include")
+	set(CMAKE_LIBRARY_PATH "C:\\usr\\vclibs\\lib")
 	
 	SET(CMAKE_C_FLAGS "/MP /arch:AVX2 ${CMAKE_C_FLAGS}")
 	SET(CMAKE_CXX_FLAGS "/MP /std:c++17 /Oi /arch:AVX2 ${CMAKE_CXX_FLAGS}")
@@ -42,7 +42,7 @@ if(MSVC)
 	
 	set(RENDERER_LIBS ${RENDERER_LIBS} ${LIBS} ${OPENGL_LIBRARY})
 	
-	include_directories("C:\\vclibs\\vclibs\\include")
+	include_directories("C:\\usr\\vclibs\\include")
 endif(MSVC)
 
 if(MINGW OR MSYS OR UNIX)
