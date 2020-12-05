@@ -80,13 +80,6 @@ private:
 	GLuint fast_vertex_vbo;
 	GLuint fast_normal_vbo;
 
-	GLuint shader_id;
-	GLuint vertex_shader_id;
-	GLuint fragment_shader_id;
-
-	GLint vertex_location;
-	GLint normal_location;
-
 	GLuint default_vao;
 
 	Eigen::Vector3f Ka, Ks, Kd;

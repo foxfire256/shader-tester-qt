@@ -18,10 +18,12 @@ class shader_program
 public:
 	shader_program() = default;
 	std::string name;
-	GLuint program_id;
+	GLuint id;
 	GLint vertex_location;
 	GLint normal_location;
-	std::list<std::unique_ptr<shader>> shaders;
+	std::unique_ptr<shader> vertex_shader;
+	std::unique_ptr<shader> geometry_shader;
+	std::unique_ptr<shader> fragment_shader;
 	std::list<std::unique_ptr<uniform>> uniforms;
 };
 

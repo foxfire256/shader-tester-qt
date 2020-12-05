@@ -16,7 +16,7 @@ public:
 	std::string file_name;
 	std::string windows_path;
 	std::string linux_path;
-	GLuint shader_id;
+	GLuint id;
 };
 
 #endif
