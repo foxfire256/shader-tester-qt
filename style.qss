@@ -7,6 +7,7 @@ QPushButton
 	border: 2px solid rgb(104, 104, 104);
 	border-radius: 4px;
 	padding: 2px;
+	font: 12pt bold;
 }
 QLineEdit
 {
@@ -15,6 +16,7 @@ QLineEdit
 	border: 2px solid rgb(104, 104, 104);
 	border-radius: 4px;
 	padding: 2px;
+	font: 12pt bold;
 }
 QComboBox
 {
@@ -24,6 +26,7 @@ QComboBox
 	border: 2px solid rgb(104, 104, 104);
 	border-radius: 4px;
 	padding: 2px;
+	font: 12pt bold;
 }
 QComboBox QAbstractItemView
 {
@@ -36,8 +39,13 @@ QSpinBox
 	border: 2px solid rgb(104, 104, 104);
 	border-radius: 4px;
 	padding: 2px;
+	font: 12pt bold;
 }
-QLabel { color: white; }
+QLabel
+{ 
+	color: white;
+	font: 12pt bold;
+}
 QMainWindow { background-color: #333337; }
 QWidget { background-color: #333337; }
 QSplitter::handle {

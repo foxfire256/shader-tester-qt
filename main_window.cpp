@@ -63,27 +63,27 @@ main_window::main_window(int win_w, int win_h, const std::string &config_file,
 
 	int line_edit_width = 50;
 
-	for(auto &u : (*(glw->sp))->uniforms)
+	for(auto &u : glw->sp.get()->uniforms)
 	{
-		if((*u)->data_type == "1f")
+		if(u.get()->data_type == "1f")
 		{
 			float f0;
 			try
 			{
-				f0 = std::stof((*u)->initial_value);
+				f0 = std::stof(u.get()->initial_value);
 			}
 			catch(const std::exception &e)
 			{
 				std::cerr << "Error: " << e.what() << std::endl;
-				std::cerr << "Failed to convert " << (*u)->initial_value << " to float" << std::endl;
+				std::cerr << "Failed to convert " << u.get()->initial_value << " to float" << std::endl;
 				exit(-1);
 			}
 
-			glw->u1f.emplace(std::make_pair((*u)->name, f0));
+			glw->u1f.emplace(std::make_pair(u.get()->name, f0));
 
-			QLabel *lbl = new QLabel((*u)->name.c_str(), this);
+			QLabel *lbl = new QLabel(u.get()->name.c_str(), this);
 			lbl->setSizePolicy(right_size_policy);
-			QLineEdit *le = new QLineEdit((*u)->initial_value.c_str(), this);
+			QLineEdit *le = new QLineEdit(u.get()->initial_value.c_str(), this);
 			le->setSizePolicy(right_size_policy2);
 			le->setMinimumWidth(line_edit_width);
 			QHBoxLayout *lt = new QHBoxLayout();
@@ -91,15 +91,15 @@ main_window::main_window(int win_w, int win_h, const std::string &config_file,
 			lt->addWidget(le);
 			right_layout->addItem(lt);
 
-			std::string name = (*u)->name;
+			std::string name = u.get()->name;
 
 			connect(le, &QLineEdit::editingFinished,
 				[=]() {this->glw->uniform_changed_1f(name, le->text()); });
 		}
-		else if((*u)->data_type == "vec3")
+		else if(u.get()->data_type == "vec3")
 		{
 			int i = 0;
-			std::stringstream ss((*u)->initial_value);
+			std::stringstream ss(u.get()->initial_value);
 			std::array<std::string, 3> s;
 			std::array<float, 3> f;
 			while(std::getline(ss, s[i], ','))
@@ -118,9 +118,9 @@ main_window::main_window(int win_w, int win_h, const std::string &config_file,
 				if(i >= 3)
 					break;
 			}
-			glw->u3fv.emplace(std::make_pair((*u)->name, f));
+			glw->u3fv.emplace(std::make_pair(u.get()->name, f));
 
-			QLabel *lbl = new QLabel((*u)->name.c_str(), this);
+			QLabel *lbl = new QLabel(u.get()->name.c_str(), this);
 			lbl->setSizePolicy(right_size_policy);
 			QLineEdit *le0 = new QLineEdit(s[0].c_str(), this);
 			le0->setSizePolicy(right_size_policy2);
@@ -138,7 +138,7 @@ main_window::main_window(int win_w, int win_h, const std::string &config_file,
 			lt->addWidget(le2, 1, 2);
 			right_layout->addItem(lt);
 
-			std::string name = (*u)->name;
+			std::string name = u.get()->name;
 
 			connect(le0, &QLineEdit::editingFinished,
 				[=]() {this->glw->uniform_changed_3fv(name, 0, le0->text()); });
@@ -147,10 +147,10 @@ main_window::main_window(int win_w, int win_h, const std::string &config_file,
 			connect(le2, &QLineEdit::editingFinished,
 				[=]() {this->glw->uniform_changed_3fv(name, 2, le2->text()); });
 		}
-		else if((*u)->data_type == "vec4")
+		else if(u.get()->data_type == "vec4")
 		{
 			int i = 0;
-			std::stringstream ss((*u)->initial_value);
+			std::stringstream ss(u.get()->initial_value);
 			std::array<std::string, 4> s;
 			std::array<float, 4> f;
 			while(std::getline(ss, s[i], ','))
@@ -169,9 +169,9 @@ main_window::main_window(int win_w, int win_h, const std::string &config_file,
 				if(i >= 4)
 					break;
 			}
-			glw->u4fv.emplace(std::make_pair((*u)->name, f));
+			glw->u4fv.emplace(std::make_pair(u.get()->name, f));
 
-			QLabel *lbl = new QLabel((*u)->name.c_str(), this);
+			QLabel *lbl = new QLabel(u.get()->name.c_str(), this);
 			lbl->setSizePolicy(right_size_policy);
 			QLineEdit *le0 = new QLineEdit(s[0].c_str(), this);
 			le0->setSizePolicy(right_size_policy2);
@@ -193,7 +193,7 @@ main_window::main_window(int win_w, int win_h, const std::string &config_file,
 			lt->addWidget(le3, 1, 3);
 			right_layout->addItem(lt);
 
-			std::string name = (*u)->name;
+			std::string name = u.get()->name;
 
 			connect(le0, &QLineEdit::editingFinished,
 				[=]() {this->glw->uniform_changed_4fv(name, 0, le0->text()); });

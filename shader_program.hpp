@@ -21,8 +21,8 @@ public:
 	GLuint program_id;
 	GLint vertex_location;
 	GLint normal_location;
-	std::list<std::shared_ptr<shader *>> shaders;
-	std::list<std::shared_ptr<uniform *>> uniforms;
+	std::list<std::unique_ptr<shader>> shaders;
+	std::list<std::unique_ptr<uniform>> uniforms;
 };
 
 #endif

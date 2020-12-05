@@ -70,7 +70,7 @@ gl_widget::gl_widget(const std::string &config_file, QWidget *parent) : QOpenGLW
 		}
 
 		// WARNING: only load one mesh
-		this->m = std::make_shared<mesh *>(m);
+		this->m = std::unique_ptr<mesh>(m);
 	}
 
 	for(bpt::ptree::value_type &v : pt.get_child("shader_programs"))
@@ -90,7 +90,7 @@ gl_widget::gl_widget(const std::string &config_file, QWidget *parent) : QOpenGLW
 				s->file_name = v2.second.get<std::string>("file_name");
 				s->windows_path = v2.second.get<std::string>("windows_path");
 				s->linux_path = v2.second.get<std::string>("linux_path");
-				sp->shaders.push_back(std::make_shared<shader *>(s));
+				sp->shaders.push_back(std::unique_ptr<shader>(s));
 			}
 
 			for(bpt::ptree::value_type &v2 : v.second.get_child("uniforms"))
@@ -99,7 +99,7 @@ gl_widget::gl_widget(const std::string &config_file, QWidget *parent) : QOpenGLW
 				u->name = v2.second.get<std::string>("name");
 				u->data_type = v2.second.get<std::string>("data_type");
 				u->initial_value = v2.second.get<std::string>("initial_value");
-				sp->uniforms.push_back(std::make_shared<uniform *>(u));
+				sp->uniforms.push_back(std::unique_ptr<uniform>(u));
 			}
 		}
 		catch(const bpt::ptree_error &e)
@@ -111,7 +111,7 @@ gl_widget::gl_widget(const std::string &config_file, QWidget *parent) : QOpenGLW
 		}
 
 		// WARNING: only have one shader program in the config file
-		this->sp = std::make_shared<shader_program *>(sp);
+		this->sp = std::unique_ptr<shader_program>(sp);
 	}
 
 	rot_vel = 16.0f;
@@ -228,10 +228,8 @@ void gl_widget::initializeGL()
 
 	// HACK: to get around GLES 2.0 not supporting VAOs and OpenGL 3.2 core
 	// requiring one to be bound to use VBOs
-#ifndef USING_GLES2
 	glGenVertexArrays(1, &default_vao);
 	glBindVertexArray(default_vao);
-#endif
 
 	trans = { 0.0f, 0.0f, 0.0f };
 	rot = { 0.0f, 0.0f, 0.0f };

@@ -40,7 +40,7 @@ private:
 	QLabel *fps_lbl;
 	QWidget *main_widget;
 
-	std::list<std::shared_ptr<QWidget *>> uniform_widgets;
+	std::list<std::unique_ptr<QWidget>> uniform_widgets;
 };
 
 #endif

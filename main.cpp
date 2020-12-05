@@ -28,8 +28,6 @@ extern "C"
 int main(int argc, char *argv[])
 {
 	QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
-	//QCoreApplication::setAttribute(Qt::AA_UseOpenGLES);
-	//QCoreApplication::setAttribute(Qt::AA_UseSoftwareOpenGL);
 
 	QApplication a(argc, argv);
 
@@ -92,25 +90,6 @@ int main(int argc, char *argv[])
 	}
 #endif
 
-	// this does not work on Linux for some reason
-	/*
-	std::string fnt_name = ":/" + data_root 
-		+ "/fonts/grobe_deutschmeister/GrobeDeutschmeister.ttf";
-	int id = QFontDatabase::addApplicationFont(fnt_name.c_str());
-	QString family = QFontDatabase::applicationFontFamilies(id).at(0);
-	// TODO: remove debugging code below
-	std::cout << "Font file name:\n";
-	std::cout << fnt_name << std::endl;
-	std::cout << "Font family: " << family.toStdString() << std::endl;
-	QFont fnt(family, 11);
-	QApplication::setFont(fnt);
-	*/
-
-	// at least specify the font point size for now
-	QFont fnt = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
-	fnt.setPointSize(11);
-	fnt.setBold(true);
-	QApplication::setFont(fnt);
 #if defined(_WIN32) || defined(_WIN64)
 	QFile file("C:/dev/shader-tester-qt/style.qss");
 #else

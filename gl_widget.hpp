@@ -1,10 +1,10 @@
 #ifndef GL_WIDGET_HPP
 #define GL_WIDGET_HPP
 
-#include <string>
-#include <memory>
-#include <unordered_map>
 #include <array>
+#include <memory>
+#include <string>
+#include <unordered_map>
 
 #include <QOpenGLWidget>
 #include <QOpenGLExtraFunctions>
@@ -31,8 +31,8 @@ public:
 	gl_widget(const std::string &config_file, QWidget *parent = nullptr);
 	virtual ~gl_widget() override;
 
-	std::shared_ptr<mesh *> m;
-	std::shared_ptr<shader_program *> sp;
+	std::unique_ptr<mesh> m;
+	std::unique_ptr<shader_program> sp;
 
 	std::unordered_map<std::string, float> u1f;
 	std::unordered_map<std::string, std::array<float, 3>> u3fv;
