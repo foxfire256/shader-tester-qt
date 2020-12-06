@@ -312,6 +312,9 @@ void gl_widget::initializeGL()
 	}
 	std::string frag_s;
 	frag_s.assign(std::istreambuf_iterator<char>(f_f), std::istreambuf_iterator<char>());
+
+	v_f.close();
+	f_f.close();
 	
 	int length = 0, chars_written = 0;
 	char *info_log;
@@ -485,7 +488,7 @@ void gl_widget::resizeGL(int w, int h)
 
 	MVP = P * MV;
 
-	if(sp.get()->id)
+	if(sp && sp.get()->id)
 	{
 		glUseProgram(sp.get()->id);
 		int u = glGetUniformLocation(sp.get()->id, "MVP");
