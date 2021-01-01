@@ -27,10 +27,6 @@ extern "C"
 
 int main(int argc, char *argv[])
 {
-	QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
-
-	QApplication a(argc, argv);
-
 #if defined(_WIN32) || defined(_WIN64)
 	std::string config_file = "C:/dev/shader-tester-qt/scene.xml";
 #else
@@ -51,12 +47,10 @@ int main(int argc, char *argv[])
 		<< BOOST_VERSION % 100
 		<< std::endl;
 
-    // this does not work in Linux (openSUSE) as of 2020-07-16
-#if defined(_WIN32) || defined(_WIN64)
 	namespace po = boost::program_options;
 
-    po::variables_map vm;
-    
+	po::variables_map vm;
+	
 	// parse command line
 	po::options_description desc("Command line options");
 
@@ -88,8 +82,11 @@ int main(int argc, char *argv[])
 	{
 		config_file = vm["config-file"].as<std::string>();
 	}
-#endif
 
+	// WARNING: don't use setFont() when you are using a style sheet
+	// this will cause the font to fail to load on Linux
+	// https://doc.qt.io/qt-5/qapplication.html#setFont
+	//QApplication::setFont(fnt);
 #if defined(_WIN32) || defined(_WIN64)
 	QFile file("C:/dev/shader-tester-qt/style.qss");
 #else
@@ -97,8 +94,8 @@ int main(int argc, char *argv[])
 #endif
 	file.open(QFile::ReadOnly);
 	QString style_sheet = QLatin1String(file.readAll());
-	a.setStyleSheet(style_sheet);
 
+	QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
 	// https://doc.qt.io/qt-5/qsurfaceformat.html
 	QSurfaceFormat format;
 	// set the OpenGL version
@@ -112,6 +109,9 @@ int main(int argc, char *argv[])
 	// 0 = no vertical sync, 1 = vertical sync
 	format.setSwapInterval(0);
 	QSurfaceFormat::setDefaultFormat(format);
+
+	QApplication a(argc, argv);
+	a.setStyleSheet(style_sheet);
 
 	// if you don't pass nullptr in here the compiler thinks this is a function
 	// declaration

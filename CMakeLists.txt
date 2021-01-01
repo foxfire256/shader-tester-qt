@@ -1,8 +1,13 @@
-cmake_minimum_required(VERSION 3.6)
-# cmake version 3.6 is required for Visual Studio startup project
+cmake_minimum_required(VERSION 3.8)
+# cmake version 3.8 is required for CXX 17
 project(shader-tester-qt)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(BUILD_SHARED_LIBS OFF)
 
 include_directories("common-cpp")
 
@@ -17,95 +22,33 @@ if(MSVC)
 	set(CMAKE_INCLUDE_PATH "C:\\usr\\vclibs\\include")
 	set(CMAKE_LIBRARY_PATH "C:\\usr\\vclibs\\lib")
 	
-	SET(CMAKE_C_FLAGS "/MP /arch:AVX2 ${CMAKE_C_FLAGS}")
-	SET(CMAKE_CXX_FLAGS "/MP /std:c++17 /Oi /arch:AVX2 ${CMAKE_CXX_FLAGS}")
-	
-	find_package(OpenGL REQUIRED)
-	find_library(OPENGL_LIBRARY NAMES OpenGL32 opengl32)
+	SET(CMAKE_C_FLAGS "/MP ${CMAKE_C_FLAGS}")
+	SET(CMAKE_CXX_FLAGS "/MP /Oi ${CMAKE_CXX_FLAGS}")
 
 	set(Boost_USE_STATIC_LIBS OFF )
 	set(Boost_USE_MULTITHREADED ON)
 	set(Boost_USE_STATIC_RUNTIME OFF)
 	
-	find_package(Boost COMPONENTS program_options system filesystem REQUIRED)
-	include_directories(${Boost_INCLUDE_DIRS})
-	set(BOOST_LIBS ${Boost_LIBRARIES})
-
-	find_package(Qt5Core)
-	find_package(Qt5Widgets)
-	find_package(Qt5Gui)
-	find_package(Qt5OpenGL)
-	
-	set(QT_LIBS Qt5::Core Qt5::Widgets Qt5::Gui Qt5::OpenGL)
-	
 	set(LIBS ${LIBS} kernel32.lib)
-	
-	set(RENDERER_LIBS ${RENDERER_LIBS} ${LIBS} ${OPENGL_LIBRARY})
 	
 	include_directories("C:\\usr\\vclibs\\include")
 endif(MSVC)
 
 if(MINGW OR MSYS OR UNIX)
 	if(UNIX AND NOT APPLE)
-		set(CMAKE_PREFIX_PATH "/usr")
-		set(CMAKE_INCLUDE_PATH "/usr/include")
-		set(CMAKE_LIBRARY_PATH "/usr/lib")
+		set(OpenGL_GL_PREFERENCE GLVND)
 	elseif(MINGW OR MSYS)
-		set(CMAKE_PREFIX_PATH "c:/msys64/mingw64")
-		set(CMAKE_INCLUDE_PATH "c:/msys64/mingw64/include")
-		set(CMAKE_LIBRARY_PATH "c:/msys64/mingw64/lib")
-	endif(UNIX AND NOT APPLE)
-	
-	if(UNIX AND NOT APPLE)
-        set(OpenGL_GL_PREFERENCE GLVND)
-		find_package(OpenGL REQUIRED)
-		find_library(OPENGL_LIBRARY NAMES OpenGL)
-		set(LIBS ${LIBS})
-		set(RENDERER_LIBS ${RENDERER_LIBS} ${LIBS} ${OPENGL_LIBRARY})
-		# QT_DIR should already be defined
-	elseif(MINGW OR MSYS)
-		find_package(OpenGL REQUIRED)
-		find_library(OPENGL_LIBRARY NAMES OpenGL32 opengl32)
 		set(LIBS ${LIBS} -lmingw32)
-		set(RENDERER_LIBS ${RENDERER_LIBS} ${LIBS} ${OPENGL_LIBRARY})
 		set(QT_DIR "c:/msys64/mingw64")
 	endif(UNIX AND NOT APPLE)
-
-	find_package(Qt5Core)
-	find_package(Qt5Widgets)
-	find_package(Qt5Gui)
-	find_package(Qt5OpenGL)
 	
 	if(UNIX AND NOT APPLE)
-		set(QT_LIBS Qt5::Core Qt5::Widgets Qt5::Gui Qt5::OpenGL)
 		include_directories("/usr/include")
 		include_directories("/usr/include/eigen3")
 	elseif(MINGW OR MSYS)
-		set(QT_LIBS Qt5::Core Qt5::Widgets Qt5::Gui Qt5::OpenGL)
 		include_directories("c:/msys64/mingw64/include")
 		include_directories("c:/msys64/mingw64/include/eigen3")
 	endif(UNIX AND NOT APPLE)
-
-	find_package(Boost COMPONENTS program_options system filesystem REQUIRED)
-	include_directories(${Boost_INCLUDE_DIRS})
-	set(BOOST_LIBS ${Boost_LIBRARIES})
-	
-	set(CMAKE_C_FLAGS_RELEASE "-Ofast -mavx2")
-	set(CMAKE_CXX_FLAGS_RELEASE "-Ofast -mavx2")
-	
-	# WARNING: warnings are disabled
-	set(CMAKE_C_FLAGS_DEBUG "-ggdb3 -Og")
-	set(CMAKE_CXX_FLAGS_DEBUG "-ggdb3 -Og -w")
-
-	# enable C11/C++17 for gcc and clang
-	set(EXTRA_CXX_FLAGS "-std=c++17 -Wno-deprecated-declarations -pipe -frtti")
-	set(EXTRA_C_FLAGS "-std=c17 -Wno-deprecated-declarations -pipe")
-	
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_C_FLAGS}")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EXTRA_CXX_FLAGS}")
-	
-	# pipe keeps compilation in memory
-	set(CMAKE_LD_FLAGS "-pipe")
 endif(MINGW OR MSYS OR UNIX)
 
 set(MAIN_SOURCE
@@ -130,21 +73,26 @@ set(MAIN_SOURCE
 	uniform.hpp
 )
 
+find_package(OpenGL REQUIRED)
+
+find_package(Boost COMPONENTS program_options system filesystem REQUIRED)
+include_directories(${Boost_INCLUDE_DIRS})
+
+find_package(Qt5Core)
+find_package(Qt5Widgets)
+find_package(Qt5Gui)
+find_package(Qt5OpenGL)
+
 # static libraries don't work so well on Apple for some reason
 set(LIBRARY_TYPE STATIC)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 add_executable(${PROJECT_NAME} ${MAIN_SOURCE} ${COMMON_SOURCE} )
-target_link_libraries(${PROJECT_NAME} ${QT_LIBS} ${RENDERER_LIBS} ${BOOST_LIBS})
+target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Widgets Qt5::Gui Qt5::OpenGL ${OPENGL_LIBRARY} ${Boost_LIBRARIES})
 set(CMAKE_AUTORCC OFF)
 set(CMAKE_AUTOMOC OFF)
 
 if(MSVC)
 	set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
 endif(MSVC)
-
-MESSAGE( STATUS "MINGW: " ${MINGW} )
-MESSAGE( STATUS "MSYS: " ${MSYS} )
-MESSAGE( STATUS "MSVC: " ${MSVC} )
-MESSAGE( STATUS "APPLE: " ${APPLE} )
