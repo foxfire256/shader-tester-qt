@@ -154,8 +154,8 @@ void gl_widget::uniform_changed_1f(const std::string &name, QString s)
 	u1f[name] = f;
 
 	print_opengl_error();
-	glUseProgram(sp.get()->id);
-	int u = glGetUniformLocation(sp.get()->id, name.c_str());
+	glUseProgram(sp->id);
+	int u = glGetUniformLocation(sp->id, name.c_str());
 	glUniform1f(u, f);
 	print_opengl_error();
 }
@@ -180,8 +180,8 @@ void gl_widget::uniform_changed_3fv(const std::string &name, int index, QString 
 	a[index] = f;
 
 	print_opengl_error();
-	glUseProgram(sp.get()->id);
-	int u = glGetUniformLocation(sp.get()->id, name.c_str());
+	glUseProgram(sp->id);
+	int u = glGetUniformLocation(sp->id, name.c_str());
 	glUniform3fv(u, 1, a.data());
 	print_opengl_error();
 }
@@ -206,8 +206,8 @@ void gl_widget::uniform_changed_4fv(const std::string &name, int index, QString 
 	a[index] = f;
 
 	print_opengl_error();
-	glUseProgram(sp.get()->id);
-	int u = glGetUniformLocation(sp.get()->id, name.c_str());
+	glUseProgram(sp->id);
+	int u = glGetUniformLocation(sp->id, name.c_str());
 	glUniform4fv(u, 1, a.data());
 	print_opengl_error();
 }
@@ -320,45 +320,45 @@ void gl_widget::initializeGL()
 	char *info_log;
 
 	// vertex shader first
-	sp.get()->vertex_shader.get()->id = glCreateShader(GL_VERTEX_SHADER);
-	if(sp.get()->vertex_shader.get()->id == 0)
+	sp->vertex_shader->id = glCreateShader(GL_VERTEX_SHADER);
+	if(sp->vertex_shader->id == 0)
 	{
 		printf("Failed to create GL_VERTEX_SHADER!\n");
 		return;
 	}
 
 	const char *vert_c = vert_s.c_str();
-	glShaderSource(sp.get()->vertex_shader.get()->id, 1, &vert_c, NULL);
-	glCompileShader(sp.get()->vertex_shader.get()->id);
+	glShaderSource(sp->vertex_shader->id, 1, &vert_c, NULL);
+	glCompileShader(sp->vertex_shader->id);
 
-	print_shader_info_log(sp.get()->vertex_shader.get()->id);
+	print_shader_info_log(sp->vertex_shader->id);
 
-	sp.get()->fragment_shader.get()->id = glCreateShader(GL_FRAGMENT_SHADER);
-	if(sp.get()->fragment_shader.get()->id == 0)
+	sp->fragment_shader->id = glCreateShader(GL_FRAGMENT_SHADER);
+	if(sp->fragment_shader->id == 0)
 	{
 		printf("Failed to create GL_FRAGMENT_SHADER!\n");
 		return;
 	}
 
 	const char *frag_c = frag_s.c_str();
-	glShaderSource(sp.get()->fragment_shader.get()->id, 1, &frag_c, NULL);
-	glCompileShader(sp.get()->fragment_shader.get()->id);
+	glShaderSource(sp->fragment_shader->id, 1, &frag_c, NULL);
+	glCompileShader(sp->fragment_shader->id);
 
-	print_shader_info_log(sp.get()->fragment_shader.get()->id);
+	print_shader_info_log(sp->fragment_shader->id);
 
-	sp.get()->id = glCreateProgram();
-	if(sp.get()->id == 0)
+	sp->id = glCreateProgram();
+	if(sp->id == 0)
 	{
 		printf("Failed at glCreateProgram()!\n");
 		return;
 	}
 
-	glAttachShader(sp.get()->id, sp.get()->vertex_shader.get()->id);
-	glAttachShader(sp.get()->id, sp.get()->fragment_shader.get()->id);
+	glAttachShader(sp->id, sp->vertex_shader->id);
+	glAttachShader(sp->id, sp->fragment_shader->id);
 
-	glLinkProgram(sp.get()->id);
+	glLinkProgram(sp->id);
 
-	glGetProgramiv(sp.get()->id, GL_INFO_LOG_LENGTH, &length);
+	glGetProgramiv(sp->id, GL_INFO_LOG_LENGTH, &length);
 
 	// use 2 for the length because NVidia cards return a line feed always
 	if(length > 4)
@@ -375,16 +375,16 @@ void gl_widget::initializeGL()
 			printf("Shader program info log:\n");
 		}
 
-		glGetProgramInfoLog(sp.get()->id, length, &chars_written, info_log);
+		glGetProgramInfoLog(sp->id, length, &chars_written, info_log);
 
 		printf("%s\n", info_log);
 
 		free(info_log);
 	}
 
-	glUseProgram(sp.get()->id);
-	sp.get()->vertex_location = glGetAttribLocation(sp.get()->id, "vertex_position");
-	sp.get()->normal_location = glGetAttribLocation(sp.get()->id, "vertex_normal");
+	glUseProgram(sp->id);
+	sp->vertex_location = glGetAttribLocation(sp->id, "vertex_position");
+	sp->normal_location = glGetAttribLocation(sp->id, "vertex_normal");
 
 	/*
 	int u = glGetUniformLocation(shader_id, "light_pos");
@@ -396,14 +396,14 @@ void gl_widget::initializeGL()
 	u = glGetUniformLocation(shader_id, "Ld");
 	glUniform3fv(u, 1, Ld.data());
 	*/
-	int u = glGetUniformLocation(sp.get()->id, "color");
+	int u = glGetUniformLocation(sp->id, "color");
 	glUniform4fv(u, 1, color.data());
 
-	u = glGetUniformLocation(sp.get()->id, "MVP");
+	u = glGetUniformLocation(sp->id, "MVP");
 	glUniformMatrix4fv(u, 1, GL_FALSE, MVP.data());
-	u = glGetUniformLocation(sp.get()->id, "MV");
+	u = glGetUniformLocation(sp->id, "MV");
 	glUniformMatrix4fv(u, 1, GL_FALSE, MV.data());
-	u = glGetUniformLocation(sp.get()->id, "normal_matrix");
+	u = glGetUniformLocation(sp->id, "normal_matrix");
 	glUniformMatrix3fv(u, 1, GL_FALSE, normal_matrix.data());
 
 	print_opengl_error();
@@ -442,19 +442,19 @@ void gl_widget::initializeGL()
 	*/
 	for(auto i : u1f)
 	{
-		int u = glGetUniformLocation(sp.get()->id, i.first.c_str());
+		int u = glGetUniformLocation(sp->id, i.first.c_str());
 		glUniform1f(u, i.second);
 	}
 
 	for(auto i : u3fv)
 	{
-		int u = glGetUniformLocation(sp.get()->id, i.first.c_str());
+		int u = glGetUniformLocation(sp->id, i.first.c_str());
 		glUniform3fv(u, 1, i.second.data());
 	}
 
 	for(auto i : u4fv)
 	{
-		int u = glGetUniformLocation(sp.get()->id, i.first.c_str());
+		int u = glGetUniformLocation(sp->id, i.first.c_str());
 		glUniform4fv(u, 1, i.second.data());
 	}
 
@@ -488,10 +488,10 @@ void gl_widget::resizeGL(int w, int h)
 
 	MVP = P * MV;
 
-	if(sp && sp.get()->id)
+	if(sp && sp->id)
 	{
-		glUseProgram(sp.get()->id);
-		int u = glGetUniformLocation(sp.get()->id, "MVP");
+		glUseProgram(sp->id);
+		int u = glGetUniformLocation(sp->id, "MVP");
 		glUniformMatrix4fv(u, 1, GL_FALSE, MVP.data());
 	}
 }
@@ -525,22 +525,22 @@ void gl_widget::paintGL()
 
 	MVP = P * MV;
 
-	glUseProgram(sp.get()->id);
+	glUseProgram(sp->id);
 
-	int u = glGetUniformLocation(sp.get()->id, "MVP");
+	int u = glGetUniformLocation(sp->id, "MVP");
 	glUniformMatrix4fv(u, 1, GL_FALSE, MVP.data());
-	u = glGetUniformLocation(sp.get()->id, "MV");
+	u = glGetUniformLocation(sp->id, "MV");
 	glUniformMatrix4fv(u, 1, GL_FALSE, MV.data());
-	u = glGetUniformLocation(sp.get()->id, "normal_matrix");
+	u = glGetUniformLocation(sp->id, "normal_matrix");
 	glUniformMatrix3fv(u, 1, GL_FALSE, normal_matrix.data());
 
 	glBindBuffer(GL_ARRAY_BUFFER, fast_vertex_vbo);
-	glEnableVertexAttribArray(sp.get()->vertex_location);
-	glVertexAttribPointer(sp.get()->vertex_location, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(sp->vertex_location);
+	glVertexAttribPointer(sp->vertex_location, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, fast_normal_vbo);
-	glEnableVertexAttribArray(sp.get()->normal_location);
-	glVertexAttribPointer(sp.get()->normal_location, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(sp->normal_location);
+	glVertexAttribPointer(sp->normal_location, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 	glDrawArrays(GL_TRIANGLES, 0, obj->vertex_count_ogl);
 
