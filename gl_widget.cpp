@@ -30,8 +30,8 @@ gl_widget::gl_widget(const std::string &config_file, QWidget *parent) : QOpenGLW
 	this->config_file = config_file;
 	render_time = 0.0;
 	frames = framerate = 0;
-	fps_counter = new fox::counter();
-	update_counter = new fox::counter();
+	fps_counter = std::make_unique<fox::counter>();
+	update_counter = std::make_unique<fox::counter>();
 	obj = nullptr;
 
 	namespace bpt = boost::property_tree;
@@ -130,9 +130,7 @@ gl_widget::gl_widget(const std::string &config_file, QWidget *parent) : QOpenGLW
 
 gl_widget::~gl_widget()
 {
-	delete fps_counter;
-	delete update_counter;
-	delete obj;
+	
 }
 
 void gl_widget::uniform_changed_1f(const std::string &name, QString s)
@@ -410,7 +408,7 @@ void gl_widget::initializeGL()
 
 	// blade1, bunny, dragon3, icosphere2
 	std::string model_file = data_root + "/meshes/dragon3.obj";
-	obj = new fox::gfx::model_loader_obj();
+	obj = std::make_unique<fox::gfx::model_loader_obj>();
 	if(obj->load_fast(model_file))
 	{
 		std::cerr << "Failed to load mesh: " << model_file << std::endl;

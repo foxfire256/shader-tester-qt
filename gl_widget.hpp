@@ -56,11 +56,11 @@ protected:
 private:
 	std::string config_file;
 	int w, h;
-	fox::counter *fps_counter;
+	std::unique_ptr<fox::counter> fps_counter;
 	double render_time;
 	int frames, framerate;
 
-	fox::gfx::model_loader_obj *obj;
+	std::unique_ptr<fox::gfx::model_loader_obj> obj;
 
 	Eigen::Vector3f eye, target, up;
 	Eigen::Affine3f V;
@@ -85,7 +85,7 @@ private:
 	Eigen::Vector3f Ka, Ks, Kd;
 	float shininess;
 
-	fox::counter *update_counter;
+	std::unique_ptr<fox::counter> update_counter;
 
 	float rot_vel;
 };
