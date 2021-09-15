@@ -5,3 +5,9 @@
 [submodule "data"]
 	path = data
 	url = ssh://foxfire@foxfire256.ddns.net:27730/nas/dev/model-viewer-data
+[submodule "tinyobjloader"]
+	path = tinyobjloader
+	url = git@github.com:tinyobjloader/tinyobjloader.git
+[submodule "EpsilonEridaniOpenGL"]
+	path = EpsilonEridaniOpenGL
+	url = ssh://foxfire@foxfire256.ddns.net:27730/nas/dev/EpsilonEridaniOpenGL
