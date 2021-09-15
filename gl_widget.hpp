@@ -13,15 +13,12 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-class shader_program;
+class mesh;
+class shader_program2;
 
 namespace fox
 {
 	class counter;
-}
-namespace fox::gfx
-{
-	class model_loader_obj;
 }
 
 class gl_widget : public QOpenGLWidget
@@ -32,8 +29,8 @@ public:
 	gl_widget(const std::string &config_file, const std::string& data_root, QWidget *parent = nullptr);
 	virtual ~gl_widget() override;
 
-	//std::unique_ptr<mesh> m;
-	std::unique_ptr<shader_program> sp;
+	std::unique_ptr<mesh> m;
+	std::unique_ptr<shader_program2> sp;
 
 	std::unordered_map<std::string, float> u1f;
 	std::unordered_map<std::string, std::array<float, 3>> u3fv;
@@ -61,8 +58,6 @@ private:
 	std::unique_ptr<fox::counter> fps_counter;
 	double render_time;
 	int frames, framerate;
-
-	std::unique_ptr<fox::gfx::model_loader_obj> obj;
 
 	Eigen::Vector3f eye, target, up;
 	Eigen::Affine3f V;

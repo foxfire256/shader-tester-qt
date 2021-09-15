@@ -11,6 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(BUILD_SHARED_LIBS OFF)
 
 include_directories("common-cpp")
+include_directories("EpsilonEridaniOpenGL")
 
 # used this to add common-cpp as a submodule
 # git submodule add ssh://foxfire@foxfire256.ddns.net:27730/nas/dev/common-cpp common-cpp
@@ -73,17 +74,21 @@ set(MAIN_SOURCE
 	key_handler.cpp
 	common-cpp/fox/counter.hpp
 	common-cpp/fox/counter.cpp
-	common-cpp/fox/gfx/model_loader_obj.hpp
-	common-cpp/fox/gfx/model_loader_obj.cpp
 	common-cpp/fox/gfx/eigen_opengl.hpp
 	common-cpp/fox/gfx/eigen_opengl.cpp
 	common-cpp/fox/gfx/opengl_error_checker.h
 	common-cpp/fox/gfx/opengl_error_checker.c
-	shader.hpp
-	shader_program.hpp
+	shader2.hpp
+	shader_program2.hpp
 	uniform.hpp
 	tinyobjloader/tiny_obj_loader.h
-	tinyobjloader/tiny_obj_loader.cc
+	#tinyobjloader/tiny_obj_loader.cc
+	EpsilonEridaniOpenGL/mesh.hpp
+	EpsilonEridaniOpenGL/mesh.cpp
+	EpsilonEridaniOpenGL/shader.hpp
+	EpsilonEridaniOpenGL/shader.cpp
+	EpsilonEridaniOpenGL/shader_program.hpp
+	EpsilonEridaniOpenGL/shader_program.cpp
 )
 
 set(GLAD_SOURCE

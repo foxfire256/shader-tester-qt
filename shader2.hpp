@@ -3,15 +3,12 @@
 #define SHADER_HPP
 
 #include <string>
-#if defined(_WIN32) || defined(_WIN64)
-#include <windows.h>
-#endif
-#include <GL/gl.h>
+#include <glad/glad.h>
 
-class shader
+class shader2
 {
 public:
-	shader() = default;
+	shader2() = default;
 	std::string type;
 	std::string file_name;
 	GLuint id;

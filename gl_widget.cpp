@@ -14,12 +14,12 @@
 #include "tinyobjloader/tiny_obj_loader.h"
 
 #include "fox/counter.hpp"
-#include "fox/gfx/model_loader_obj.hpp"
 #include "fox/gfx/eigen_opengl.hpp"
 #include "fox/gfx/opengl_error_checker.h"
 
-#include "shader_program.hpp"
-#include "shader.hpp"
+#include "mesh.hpp"
+#include "shader_program2.hpp"
+#include "shader2.hpp"
 #include "uniform.hpp"
 
 gl_widget::gl_widget(const std::string &config_file, const std::string& data_root, QWidget *parent) : QOpenGLWidget(parent)
@@ -30,7 +30,6 @@ gl_widget::gl_widget(const std::string &config_file, const std::string& data_roo
 	frames = framerate = 0;
 	fps_counter = std::make_unique<fox::counter>();
 	update_counter = std::make_unique<fox::counter>();
-	obj = nullptr;
 
 	namespace bpt = boost::property_tree;
 	bpt::ptree pt;
@@ -73,30 +72,30 @@ gl_widget::gl_widget(const std::string &config_file, const std::string& data_roo
 
 	for(bpt::ptree::value_type &v : pt.get_child("scene.shader_programs"))
 	{
-		shader_program *sp = nullptr;
+		shader_program2 *sp = nullptr;
 		try
 		{
-			sp = new shader_program();
+			sp = new shader_program2();
 			sp->name = v.second.get<std::string>("name");
 			sp->vertex_location = v.second.get<GLint>("vertex_location");
 			sp->normal_location = v.second.get<GLint>("normal_location");
 
 			for(bpt::ptree::value_type &v2 : v.second.get_child("shaders"))
 			{
-				shader *s = new shader();
+				shader2 *s = new shader2();
 				s->type = v2.second.get<std::string>("type");
 				s->file_name = data_root + "/data/shaders/" + v2.second.get<std::string>("file_name");
 				if(s->type == "vertex")
 				{
-					sp->vertex_shader = std::unique_ptr<shader>(s);
+					sp->vertex_shader = std::unique_ptr<shader2>(s);
 				}
 				else if(s->type == "geometry")
 				{
-					sp->geometry_shader = std::unique_ptr<shader>(s);
+					sp->geometry_shader = std::unique_ptr<shader2>(s);
 				}
 				else if(s->type == "fragment")
 				{
-					sp->fragment_shader = std::unique_ptr<shader>(s);
+					sp->fragment_shader = std::unique_ptr<shader2>(s);
 				}
 			}
 
@@ -118,7 +117,7 @@ gl_widget::gl_widget(const std::string &config_file, const std::string& data_roo
 		}
 
 		// WARNING: only have one shader program in the config file
-		this->sp = std::unique_ptr<shader_program>(sp);
+		this->sp = std::unique_ptr<shader_program2>(sp);
 	}
 
 	rot_vel = 16.0f;
@@ -406,22 +405,13 @@ void gl_widget::initializeGL()
 
 	print_opengl_error();
 
-	// blade1, bunny, dragon3, icosphere2
-	std::string model_file = data_root + "/data/meshes/dragon3.obj";
-	obj = std::make_unique<fox::gfx::model_loader_obj>();
-	if(obj->load_fast(model_file))
+	std::string model_file2 = data_root + "/data/meshes/Monkey.obj";
+	m = std::make_unique<mesh>();
+	if(m->load_obj(model_file2) != 0)
 	{
-		std::cerr << "Failed to load mesh: " << model_file << std::endl;
+		std::cerr << "Failed to load mesh with mesh: " << model_file2 << std::endl;
 		exit(-1);
 	}
-
-	printf("Model has %d verticies\n", obj->vertex_count_ogl);
-	printf("Vertex data takes up %.3f MB\n", (float)obj->vertex_count_ogl * 12 /
-		(1024 * 1024));
-	printf("Normal data takes up %.3f MB\n", (float)obj->vertex_count_ogl * 12 /
-		(1024 * 1024));
-
-	print_opengl_error();
 
 	/*
 	Ka = Eigen::Vector3f(0.3f, 0.3f, 0.3f);
@@ -455,19 +445,6 @@ void gl_widget::initializeGL()
 		int u = glGetUniformLocation(sp->id, i.first.c_str());
 		glUniform4fv(u, 1, i.second.data());
 	}
-
-	print_opengl_error();
-
-	glGenBuffers(1, &fast_vertex_vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, fast_vertex_vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * obj->vertex_count_ogl * 3,
-		obj->vertices_ogl.data(), GL_STATIC_DRAW);
-	glGenBuffers(1, &fast_normal_vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, fast_normal_vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * obj->normal_count_ogl * 3,
-		obj->normals_ogl.data(), GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	print_opengl_error();
 
@@ -532,6 +509,7 @@ void gl_widget::paintGL()
 	u = glGetUniformLocation(sp->id, "normal_matrix");
 	glUniformMatrix3fv(u, 1, GL_FALSE, normal_matrix.data());
 
+	/*
 	glBindBuffer(GL_ARRAY_BUFFER, fast_vertex_vbo);
 	glEnableVertexAttribArray(sp->vertex_location);
 	glVertexAttribPointer(sp->vertex_location, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -543,6 +521,8 @@ void gl_widget::paintGL()
 	glDrawArrays(GL_TRIANGLES, 0, obj->vertex_count_ogl);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	*/
+	m->draw_first_material_arrays();
 
 	frames++;
 	

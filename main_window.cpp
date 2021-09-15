@@ -16,8 +16,8 @@
 #include "key_handler.hpp"
 #include "gl_widget.hpp"
 
-#include "shader_program.hpp"
-#include "shader.hpp"
+#include "shader_program2.hpp"
+#include "shader2.hpp"
 #include "mesh.hpp"
 #include "uniform.hpp"
 
