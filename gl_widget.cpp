@@ -9,6 +9,10 @@
 #include <boost/filesystem.hpp>
 #include <boost/range/iterator_range.hpp>
 
+#include <QOpenGLContext>
+
+#include "tinyobjloader/tiny_obj_loader.h"
+
 #include "fox/counter.hpp"
 #include "fox/gfx/model_loader_obj.hpp"
 #include "fox/gfx/eigen_opengl.hpp"
@@ -16,7 +20,6 @@
 
 #include "shader_program.hpp"
 #include "shader.hpp"
-#include "mesh.hpp"
 #include "uniform.hpp"
 
 gl_widget::gl_widget(const std::string &config_file, const std::string& data_root, QWidget *parent) : QOpenGLWidget(parent)
@@ -46,6 +49,7 @@ gl_widget::gl_widget(const std::string &config_file, const std::string& data_roo
 
 	for(bpt::ptree::value_type &v : pt.get_child("scene.meshes"))
 	{
+		/*
 		mesh *m = nullptr;
 		try
 		{
@@ -64,6 +68,7 @@ gl_widget::gl_widget(const std::string &config_file, const std::string& data_roo
 
 		// WARNING: only load one mesh
 		this->m = std::unique_ptr<mesh>(m);
+		*/
 	}
 
 	for(bpt::ptree::value_type &v : pt.get_child("scene.shader_programs"))
@@ -203,7 +208,11 @@ void gl_widget::uniform_changed_4fv(const std::string &name, int index, QString 
 
 void gl_widget::initializeGL()
 {
-	initializeOpenGLFunctions();
+	if(!gladLoadGL())
+	{
+		std::cout << "Failed to initialize OpenGL context" << std::endl;
+		exit(-1);
+	}
 
 	print_opengl_error();
 

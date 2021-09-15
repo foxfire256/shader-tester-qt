@@ -5,14 +5,15 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <vector>
+
+#include <glad/glad.h>
 
 #include <QOpenGLWidget>
-#include <QOpenGLExtraFunctions>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
 class shader_program;
-class mesh;
 
 namespace fox
 {
@@ -23,7 +24,7 @@ namespace fox::gfx
 	class model_loader_obj;
 }
 
-class gl_widget : public QOpenGLWidget, protected QOpenGLExtraFunctions
+class gl_widget : public QOpenGLWidget
 {
 	Q_OBJECT
 public:
@@ -31,7 +32,7 @@ public:
 	gl_widget(const std::string &config_file, const std::string& data_root, QWidget *parent = nullptr);
 	virtual ~gl_widget() override;
 
-	std::unique_ptr<mesh> m;
+	//std::unique_ptr<mesh> m;
 	std::unique_ptr<shader_program> sp;
 
 	std::unordered_map<std::string, float> u1f;
@@ -80,6 +81,9 @@ private:
 
 	GLuint fast_vertex_vbo;
 	GLuint fast_normal_vbo;
+
+	std::vector<float> vertices;
+	std::vector<float> normals;
 
 	GLuint default_vao;
 

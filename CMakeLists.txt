@@ -17,6 +17,10 @@ include_directories("common-cpp")
 # then manually add the following to .gitmodules
 # url = git@github.com:foxfire256/common-cpp.git
 
+# git submodule add ssh://foxfire@foxfire256.ddns.net:27730/nas/dev/EpsilonEridaniOpenGL EpsilonEridaniOpenGL
+# then manually add the following to .gitmodules
+# url = git@github.com:foxfire256/EpsilonEridaniOpenGL.git
+
 # git submodule add ssh://foxfire@foxfire256.ddns.net:27730/nas/dev/model-viewer-data data
 
 set(DATA_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -75,10 +79,17 @@ set(MAIN_SOURCE
 	common-cpp/fox/gfx/eigen_opengl.cpp
 	common-cpp/fox/gfx/opengl_error_checker.h
 	common-cpp/fox/gfx/opengl_error_checker.c
-	mesh.hpp
 	shader.hpp
 	shader_program.hpp
 	uniform.hpp
+	tinyobjloader/tiny_obj_loader.h
+	tinyobjloader/tiny_obj_loader.cc
+)
+
+set(GLAD_SOURCE
+	glad/glad.h
+	KHR/khrplatform.h
+	glad/glad.c
 )
 
 find_package(OpenGL REQUIRED)
@@ -91,13 +102,16 @@ find_package(Qt5Widgets)
 find_package(Qt5Gui)
 find_package(Qt5OpenGL)
 
-# static libraries don't work so well on Apple for some reason
-set(LIBRARY_TYPE STATIC)
+add_library(glad STATIC ${GLAD_SOURCE})
+target_link_libraries(glad
+	${OPENGL_LIBRARY}
+	${LIBS}
+)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 add_executable(${PROJECT_NAME} ${MAIN_SOURCE} ${COMMON_SOURCE} )
-target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Widgets Qt5::Gui Qt5::OpenGL ${OPENGL_LIBRARY} ${Boost_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARY} glad Qt5::Core Qt5::Widgets Qt5::Gui Qt5::OpenGL ${Boost_LIBRARIES})
 set(CMAKE_AUTORCC OFF)
 set(CMAKE_AUTOMOC OFF)
 
