@@ -27,25 +27,22 @@ extern "C"
 
 int main(int argc, char *argv[])
 {
-#if defined(_WIN32) || defined(_WIN64)
-	std::string config_file = "C:/dev/shader-tester-qt/scene.xml";
-#else
-	std::string config_file = "/home/foxfire/dev/shader-tester-qt/scene.xml";
-#endif
-
 	int win_w = 1280;
 	int win_h = 768;
 
-	std::cout << "Using Boost "
-		// major version
-		<< BOOST_VERSION / 100000
-		<< "."
-		// minor version
-		<< BOOST_VERSION / 100 % 1000
-		<< "."
-		// patch level
-		<< BOOST_VERSION % 100
-		<< std::endl;
+	std::string data_root = "";
+
+#if defined(DATA_ROOT)
+	data_root = std::string(DATA_ROOT);
+#elif !defined(DATA_ROOT) && (defined(_WIN32) || defined(_WIN64))
+	std::cout << "Failed to get DATA_ROOT from CMake, using a hard coded value." << std::endl;
+	data_root = "C:/dev/shader-tester-qt";
+#else
+	std::cout << "Failed to get DATA_ROOT from CMake, using a hard coded value." << std::endl;
+	data_root = std::string(getenv("HOME")) + "/dev/shader-tester-qt";
+#endif
+
+	std::string config_file = "";
 
 	namespace po = boost::program_options;
 
@@ -60,6 +57,7 @@ int main(int argc, char *argv[])
 		("width", po::value<int>(), "set window width")
 		("height", po::value<int>(), "set window height")
 		("config-file", po::value<std::string>(), "specify the config file")
+		("data-root", po::value<std::string>(), "set data directory")
 		;
 
 	po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -78,20 +76,37 @@ int main(int argc, char *argv[])
 	{
 		win_h = vm["height"].as<int>();
 	}
-	if(vm.count("data-root"))
+	if(vm.count("config-file"))
 	{
 		config_file = vm["config-file"].as<std::string>();
 	}
+	else
+	{
+		config_file = data_root + "/scene.xml";
+	}
+	if(vm.count("data-root"))
+	{
+		data_root = vm["data-root"].as<std::string>();
+	}
+
+	std::cout << "DATA_ROOT = " << data_root << std::endl;
+
+	std::cout << "Using Boost "
+		// major version
+		<< BOOST_VERSION / 100000
+		<< "."
+		// minor version
+		<< BOOST_VERSION / 100 % 1000
+		<< "."
+		// patch level
+		<< BOOST_VERSION % 100
+		<< std::endl;
 
 	// WARNING: don't use setFont() when you are using a style sheet
 	// this will cause the font to fail to load on Linux
 	// https://doc.qt.io/qt-5/qapplication.html#setFont
 	//QApplication::setFont(fnt);
-#if defined(_WIN32) || defined(_WIN64)
-	QFile file("C:/dev/shader-tester-qt/style.qss");
-#else
-	QFile file("/home/foxfire/dev/shader-tester-qt/style.qss");
-#endif
+	QFile file(QString(data_root.c_str()) + "/style.qss");
 	file.open(QFile::ReadOnly);
 	QString style_sheet = QLatin1String(file.readAll());
 
@@ -115,7 +130,7 @@ int main(int argc, char *argv[])
 
 	// if you don't pass nullptr in here the compiler thinks this is a function
 	// declaration
-	main_window win(win_w, win_h, config_file, nullptr);
+	main_window win(win_w, win_h, config_file, data_root, nullptr);
 	win.setAttribute(Qt::WA_QuitOnClose);
 	win.show();
 

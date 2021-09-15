@@ -22,17 +22,17 @@
 #include "uniform.hpp"
 
 //------------------------------------------------------------------------------
-main_window::main_window(int win_w, int win_h, const std::string &config_file, 
-	QWidget *parent) : QMainWindow(parent)
+main_window::main_window(int win_w, int win_h, const std::string &config_file, const std::string& data_root, QWidget *parent) : QMainWindow(parent)
 {
 	this->win_w = win_w;
 	this->win_h = win_h;
 	this->config_file = config_file;
-	
+	this->data_root = data_root;
+
 	std::cout << "Qt compile time version: " << QT_VERSION_STR << std::endl;
 	std::cout << "Qt run time version: " << qVersion() << std::endl;
 
-	glw = new gl_widget(config_file, this);
+	glw = new gl_widget(config_file, data_root, this);
 	glw->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
 	gfx_timer = new QTimer(this);

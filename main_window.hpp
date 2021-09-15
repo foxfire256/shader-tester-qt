@@ -21,7 +21,7 @@ class main_window : public QMainWindow
 
 public:
 	main_window(QWidget *parent = nullptr) = delete;
-	main_window(int win_w, int win_h, const std::string &config_file, QWidget *parent = nullptr);
+	main_window(int win_w, int win_h, const std::string &config_file, const std::string& data_root, QWidget *parent = nullptr);
 	virtual ~main_window();
 
 public slots:
@@ -32,6 +32,7 @@ private:
 	int win_w;
 	int win_h;
 	std::string config_file;
+	std::string data_root;
 	gl_widget *glw;
 	key_handler *kh;
 	QTimer *gfx_timer;

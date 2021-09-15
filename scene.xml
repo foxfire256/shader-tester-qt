@@ -1,90 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<meshes>
-	<mesh>
-		<name>dragon3</name>
-		<file_name>dragon3.obj</file_name>
-		<windows_path>C:/dev/model-viewer-data/meshes/</windows_path>
-		<linux_path>~/dev/model-viewer-data/meshes/</linux_path>
-	</mesh>
-</meshes>
-<shader_programs>
-	<shader_program>
-		<name>gouraud_half_vector_v460</name>
-		<shaders>
-			<shader>
-				<!-- vertex, fragment -->
-				<type>vertex</type>
-				<file_name>gouraud_half_vector_v460.vert</file_name>
-				<windows_path>C:/dev/model-viewer-data/shaders/</windows_path>
-				<linux_path>~/dev/model-viewer-data/shaders/</linux_path>
-			</shader>
-			<shader>
-				<!-- vertex, fragment -->
-				<type>fragment</type>
-				<file_name>gouraud_half_vector_v460.frag</file_name>
-				<windows_path>C:/dev/model-viewer-data/shaders/</windows_path>
-				<linux_path>~/dev/model-viewer-data/shaders/</linux_path>
-			</shader>
-		</shaders>
-		<uniforms>
-			<uniform>
-				<name>light_pos</name>
-				<!-- currently only 1f, vec3, vec4 -->
-				<data_type>vec4</data_type>
-				<!-- comma separated values for vectors -->
-				<initial_value>0.0,0.0,3.0,1.0</initial_value>
-			</uniform>
-			<uniform>
-				<name>La</name>
-				<!-- currently only 1f, vec3, vec4 -->
-				<data_type>vec3</data_type>
-				<!-- comma separated values for vectors -->
-				<initial_value>1.0,1.0,1.0</initial_value>
-			</uniform>
-			<uniform>
-				<name>Ld</name>
-				<!-- currently only 1f, vec3, vec4 -->
-				<data_type>vec3</data_type>
-				<!-- comma separated values for vectors -->
-				<initial_value>1.0,1.0,1.0</initial_value>
-			</uniform>
-			<uniform>
-				<name>Ls</name>
-				<!-- currently only 1f, vec3, vec4 -->
-				<data_type>vec3</data_type>
-				<!-- comma separated values for vectors -->
-				<initial_value>1.0,1.0,1.0</initial_value>
-			</uniform>
-			<uniform>
-				<name>Ka</name>
-				<!-- currently only 1f, vec3, vec4 -->
-				<data_type>vec3</data_type>
-				<!-- comma separated values for vectors -->
-				<initial_value>0.3,0.3,0.3</initial_value>
-			</uniform>
-			<uniform>
-				<name>Kd</name>
-				<!-- currently only 1f, vec3, vec4 -->
-				<data_type>vec3</data_type>
-				<!-- comma separated values for vectors -->
-				<initial_value>0.6,0.6,0.6</initial_value>
-			</uniform>
-			<uniform>
-				<name>Ks</name>
-				<!-- currently only 1f, vec3, vec4 -->
-				<data_type>vec3</data_type>
-				<!-- comma separated values for vectors -->
-				<initial_value>0.1,0.1,0.1</initial_value>
-			</uniform>
-			<uniform>
-				<name>shininess</name>
-				<!-- currently only 1f, vec3, vec4 -->
-				<data_type>1f</data_type>
-				<!-- comma separated values for vectors -->
-				<initial_value>5.0</initial_value>
-			</uniform>
-		</uniforms>
-		<vertex_location>0</vertex_location>
-		<normal_location>1</normal_location>
-	</shader_program>
-</shader_programs>
+<scene>
+	<meshes>
+		<mesh>
+			<name>dragon3</name>
+			<file_name>dragon3.obj</file_name>
+		</mesh>
+	</meshes>
+	<shader_programs>
+		<shader_program>
+			<name>gouraud_half_vector_v460</name>
+			<shaders>
+				<shader>
+					<!-- vertex, fragment -->
+					<type>vertex</type>
+					<file_name>gouraud_half_vector_v460.vert</file_name>
+				</shader>
+				<shader>
+					<!-- vertex, fragment -->
+					<type>fragment</type>
+					<file_name>gouraud_half_vector_v460.frag</file_name>
+				</shader>
+			</shaders>
+			<uniforms>
+				<uniform>
+					<name>light_pos</name>
+					<!-- currently only 1f, vec3, vec4 -->
+					<data_type>vec4</data_type>
+					<!-- comma separated values for vectors -->
+					<initial_value>0.0,0.0,3.0,1.0</initial_value>
+				</uniform>
+				<uniform>
+					<name>La</name>
+					<!-- currently only 1f, vec3, vec4 -->
+					<data_type>vec3</data_type>
+					<!-- comma separated values for vectors -->
+					<initial_value>1.0,1.0,1.0</initial_value>
+				</uniform>
+				<uniform>
+					<name>Ld</name>
+					<!-- currently only 1f, vec3, vec4 -->
+					<data_type>vec3</data_type>
+					<!-- comma separated values for vectors -->
+					<initial_value>1.0,1.0,1.0</initial_value>
+				</uniform>
+				<uniform>
+					<name>Ls</name>
+					<!-- currently only 1f, vec3, vec4 -->
+					<data_type>vec3</data_type>
+					<!-- comma separated values for vectors -->
+					<initial_value>1.0,1.0,1.0</initial_value>
+				</uniform>
+				<uniform>
+					<name>Ka</name>
+					<!-- currently only 1f, vec3, vec4 -->
+					<data_type>vec3</data_type>
+					<!-- comma separated values for vectors -->
+					<initial_value>0.3,0.3,0.3</initial_value>
+				</uniform>
+				<uniform>
+					<name>Kd</name>
+					<!-- currently only 1f, vec3, vec4 -->
+					<data_type>vec3</data_type>
+					<!-- comma separated values for vectors -->
+					<initial_value>0.6,0.6,0.6</initial_value>
+				</uniform>
+				<uniform>
+					<name>Ks</name>
+					<!-- currently only 1f, vec3, vec4 -->
+					<data_type>vec3</data_type>
+					<!-- comma separated values for vectors -->
+					<initial_value>0.1,0.1,0.1</initial_value>
+				</uniform>
+				<uniform>
+					<name>shininess</name>
+					<!-- currently only 1f, vec3, vec4 -->
+					<data_type>1f</data_type>
+					<!-- comma separated values for vectors -->
+					<initial_value>5.0</initial_value>
+				</uniform>
+			</uniforms>
+			<vertex_location>0</vertex_location>
+			<normal_location>1</normal_location>
+		</shader_program>
+	</shader_programs>
+</scene>

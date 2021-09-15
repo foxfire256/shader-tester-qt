@@ -19,15 +19,10 @@
 #include "mesh.hpp"
 #include "uniform.hpp"
 
-#if defined(_WIN32) || defined(_WIN64)
-	std::string data_root = "C:/dev/model-viewer-data";
-#else // Linux or Unix
-	std::string data_root = std::string(getenv("HOME")) + "/dev/model-viewer-data";
-#endif
-
-gl_widget::gl_widget(const std::string &config_file, QWidget *parent) : QOpenGLWidget(parent)
+gl_widget::gl_widget(const std::string &config_file, const std::string& data_root, QWidget *parent) : QOpenGLWidget(parent)
 {
 	this->config_file = config_file;
+	this->data_root = data_root;
 	render_time = 0.0;
 	frames = framerate = 0;
 	fps_counter = std::make_unique<fox::counter>();
@@ -49,16 +44,14 @@ gl_widget::gl_widget(const std::string &config_file, QWidget *parent) : QOpenGLW
 		exit(-1);
 	}
 
-	for(bpt::ptree::value_type &v : pt.get_child("meshes"))
+	for(bpt::ptree::value_type &v : pt.get_child("scene.meshes"))
 	{
 		mesh *m = nullptr;
 		try
 		{
 			m = new mesh();
 			m->name = v.second.get<std::string>("name");
-			m->file_name = v.second.get<std::string>("file_name");
-			m->windows_path = v.second.get<std::string>("windows_path");
-			m->linux_path = v.second.get<std::string>("linux_path");
+			m->file_name = data_root + "/data/meshes/" + v.second.get<std::string>("file_name");
 
 		}
 		catch(const bpt::ptree_error &e)
@@ -73,7 +66,7 @@ gl_widget::gl_widget(const std::string &config_file, QWidget *parent) : QOpenGLW
 		this->m = std::unique_ptr<mesh>(m);
 	}
 
-	for(bpt::ptree::value_type &v : pt.get_child("shader_programs"))
+	for(bpt::ptree::value_type &v : pt.get_child("scene.shader_programs"))
 	{
 		shader_program *sp = nullptr;
 		try
@@ -87,9 +80,7 @@ gl_widget::gl_widget(const std::string &config_file, QWidget *parent) : QOpenGLW
 			{
 				shader *s = new shader();
 				s->type = v2.second.get<std::string>("type");
-				s->file_name = v2.second.get<std::string>("file_name");
-				s->windows_path = v2.second.get<std::string>("windows_path");
-				s->linux_path = v2.second.get<std::string>("linux_path");
+				s->file_name = data_root + "/data/shaders/" + v2.second.get<std::string>("file_name");
 				if(s->type == "vertex")
 				{
 					sp->vertex_shader = std::unique_ptr<shader>(s);
@@ -281,14 +272,14 @@ void gl_widget::initializeGL()
 
 	print_opengl_error();
 
-	//std::string vert_file_name = data_root + "/shaders/phong_v460.vert";
-	//std::string frag_file_name = data_root + "/shaders/phong_v460.frag";
+	//std::string vert_file_name = data_root + "/data/shaders/phong_v460.vert";
+	//std::string frag_file_name = data_root + "/data/shaders/phong_v460.frag";
 
-	//std::string vert_file_name = data_root + "/shaders/gouraud_v460.vert";
-	//std::string frag_file_name = data_root + "/shaders/gouraud_v460.frag";
+	//std::string vert_file_name = data_root + "/data/shaders/gouraud_v460.vert";
+	//std::string frag_file_name = data_root + "/data/shaders/gouraud_v460.frag";
 
-	std::string vert_file_name = data_root + "/shaders/gouraud_half_vector_v460.vert";
-	std::string frag_file_name = data_root + "/shaders/gouraud_half_vector_v460.frag";
+	std::string vert_file_name = data_root + "/data/shaders/gouraud_half_vector_v460.vert";
+	std::string frag_file_name = data_root + "/data/shaders/gouraud_half_vector_v460.frag";
 
 	std::ifstream v_f;
 	std::ifstream f_f;
@@ -407,7 +398,7 @@ void gl_widget::initializeGL()
 	print_opengl_error();
 
 	// blade1, bunny, dragon3, icosphere2
-	std::string model_file = data_root + "/meshes/dragon3.obj";
+	std::string model_file = data_root + "/data/meshes/dragon3.obj";
 	obj = std::make_unique<fox::gfx::model_loader_obj>();
 	if(obj->load_fast(model_file))
 	{

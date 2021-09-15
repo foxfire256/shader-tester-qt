@@ -28,7 +28,7 @@ class gl_widget : public QOpenGLWidget, protected QOpenGLExtraFunctions
 	Q_OBJECT
 public:
 	gl_widget(QWidget *parent = nullptr) = delete;
-	gl_widget(const std::string &config_file, QWidget *parent = nullptr);
+	gl_widget(const std::string &config_file, const std::string& data_root, QWidget *parent = nullptr);
 	virtual ~gl_widget() override;
 
 	std::unique_ptr<mesh> m;
@@ -55,6 +55,7 @@ protected:
 
 private:
 	std::string config_file;
+	std::string data_root;
 	int w, h;
 	std::unique_ptr<fox::counter> fps_counter;
 	double render_time;

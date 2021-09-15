@@ -14,8 +14,6 @@ public:
 	mesh() = default;
 	std::string name;
 	std::string file_name;
-	std::string windows_path;
-	std::string linux_path;
 	GLuint vertex_vbo;
 	GLuint normal_vbo;
 };

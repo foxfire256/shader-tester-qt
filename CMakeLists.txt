@@ -5,6 +5,7 @@ project(shader-tester-qt)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(BUILD_SHARED_LIBS OFF)
@@ -16,7 +17,14 @@ include_directories("common-cpp")
 # then manually add the following to .gitmodules
 # url = git@github.com:foxfire256/common-cpp.git
 
+# git submodule add ssh://foxfire@foxfire256.ddns.net:27730/nas/dev/model-viewer-data data
+
+set(DATA_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
+#add_compile_definitions(DATA_ROOT="${DATA_ROOT}")
+set(COMPILE_DEFINITIONS "${COMPILE_DEFINITIONS},DATA_ROOT=${CMAKE_CURRENT_SOURCE_DIR}")
+
 # cmake .. -G "Visual Studio 16 2019" -A x64
+# cmake .. -G "Visual Studio 17 2022" -A x64
 if(MSVC)
 	set(CMAKE_PREFIX_PATH "C:\\usr\\vclibs")
 	set(CMAKE_INCLUDE_PATH "C:\\usr\\vclibs\\include")
