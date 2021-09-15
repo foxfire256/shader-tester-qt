@@ -81,8 +81,6 @@ set(MAIN_SOURCE
 	shader2.hpp
 	shader_program2.hpp
 	uniform.hpp
-	tinyobjloader/tiny_obj_loader.h
-	#tinyobjloader/tiny_obj_loader.cc
 	EpsilonEridaniOpenGL/mesh.hpp
 	EpsilonEridaniOpenGL/mesh.cpp
 	EpsilonEridaniOpenGL/shader.hpp
@@ -95,6 +93,11 @@ set(GLAD_SOURCE
 	glad/glad.h
 	KHR/khrplatform.h
 	glad/glad.c
+)
+
+set(TINYOBJLOADER_SOURCE
+	tinyobjloader/tiny_obj_loader.h
+	tinyobjloader/tiny_obj_loader.cc
 )
 
 find_package(OpenGL REQUIRED)
@@ -113,10 +116,12 @@ target_link_libraries(glad
 	${LIBS}
 )
 
+add_library(tinyobjloader STATIC ${TINYOBJLOADER_SOURCE})
+
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 add_executable(${PROJECT_NAME} ${MAIN_SOURCE} ${COMMON_SOURCE} )
-target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARY} glad Qt5::Core Qt5::Widgets Qt5::Gui Qt5::OpenGL ${Boost_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARY} glad tinyobjloader Qt5::Core Qt5::Widgets Qt5::Gui Qt5::OpenGL ${Boost_LIBRARIES})
 set(CMAKE_AUTORCC OFF)
 set(CMAKE_AUTOMOC OFF)
 
