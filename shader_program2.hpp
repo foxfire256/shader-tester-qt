@@ -1,6 +1,6 @@
 
-#ifndef SHADER_PROGRAM_HPP
-#define SHADER_PROGRAM_HPP
+#ifndef SHADER_PROGRAM2_HPP
+#define SHADER_PROGRAM2_HPP
 
 #include <string>
 #include <list>
