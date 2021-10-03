@@ -15,11 +15,12 @@
 
 #include "fox/counter.hpp"
 #include "fox/gfx/eigen_opengl.hpp"
-#include "fox/gfx/opengl_error_checker.h"
+#include "check_opengl_error.hpp"
 
 #include "mesh.hpp"
 #include "shader_program2.hpp"
 #include "shader2.hpp"
+#include "shader_factory.hpp"
 #include "uniform.hpp"
 
 gl_widget::gl_widget(const std::string &config_file, const std::string& data_root, QWidget *parent) : QOpenGLWidget(parent)
@@ -146,11 +147,11 @@ void gl_widget::uniform_changed_1f(const std::string &name, QString s)
 
 	u1f[name] = f;
 
-	print_opengl_error();
+	check_opengl_error();
 	glUseProgram(sp->id);
 	int u = glGetUniformLocation(sp->id, name.c_str());
 	glUniform1f(u, f);
-	print_opengl_error();
+	check_opengl_error();
 }
 
 void gl_widget::uniform_changed_3fv(const std::string &name, int index, QString s)
@@ -172,11 +173,11 @@ void gl_widget::uniform_changed_3fv(const std::string &name, int index, QString 
 	auto &a = u3fv[name];
 	a[index] = f;
 
-	print_opengl_error();
+	check_opengl_error();
 	glUseProgram(sp->id);
 	int u = glGetUniformLocation(sp->id, name.c_str());
 	glUniform3fv(u, 1, a.data());
-	print_opengl_error();
+	check_opengl_error();
 }
 
 void gl_widget::uniform_changed_4fv(const std::string &name, int index, QString s)
@@ -198,11 +199,11 @@ void gl_widget::uniform_changed_4fv(const std::string &name, int index, QString 
 	auto &a = u4fv[name];
 	a[index] = f;
 
-	print_opengl_error();
+	check_opengl_error();
 	glUseProgram(sp->id);
 	int u = glGetUniformLocation(sp->id, name.c_str());
 	glUniform4fv(u, 1, a.data());
-	print_opengl_error();
+	check_opengl_error();
 }
 
 void gl_widget::initializeGL()
@@ -213,7 +214,7 @@ void gl_widget::initializeGL()
 		exit(-1);
 	}
 
-	print_opengl_error();
+	check_opengl_error();
 
 	printf("GL_VENDOR: %s\n", glGetString(GL_VENDOR));
 	printf("GL_RENDERER: %s\n", glGetString(GL_RENDERER));
@@ -238,6 +239,22 @@ void gl_widget::initializeGL()
 	// requiring one to be bound to use VBOs
 	glGenVertexArrays(1, &default_vao);
 	glBindVertexArray(default_vao);
+
+	std::string shader_config_file = data_root + "/shader_configs.xml";
+	auto& sf = shader_factory::get_instance();
+	/*
+	if(sf.load_config(shader_config_file, data_root))
+	{
+		std::cerr << "Failed to load or parse shader config file!" << std::endl;
+		std::cerr << "Filename: " << shader_config_file << std::endl;
+		exit(-1);
+	}
+	if(sf.load_shaders())
+	{
+		std::cerr << "Failed to load or parse gfx shaders!" << std::endl;
+		exit(-1);
+	}
+	*/
 
 	trans = { 0.0f, 0.0f, 0.0f };
 	rot = { 0.0f, 0.0f, 0.0f };
@@ -278,7 +295,7 @@ void gl_widget::initializeGL()
 
 	MVP = P * MV;
 
-	print_opengl_error();
+	check_opengl_error();
 
 	//std::string vert_file_name = data_root + "/data/shaders/phong_v460.vert";
 	//std::string frag_file_name = data_root + "/data/shaders/phong_v460.frag";
@@ -403,7 +420,7 @@ void gl_widget::initializeGL()
 	u = glGetUniformLocation(sp->id, "normal_matrix");
 	glUniformMatrix3fv(u, 1, GL_FALSE, normal_matrix.data());
 
-	print_opengl_error();
+	check_opengl_error();
 
 	std::string model_file2 = data_root + "/data/meshes/Monkey.obj";
 	m = std::make_unique<mesh>();
@@ -446,7 +463,7 @@ void gl_widget::initializeGL()
 		glUniform4fv(u, 1, i.second.data());
 	}
 
-	print_opengl_error();
+	check_opengl_error();
 
 	fflush(stdout);
 	

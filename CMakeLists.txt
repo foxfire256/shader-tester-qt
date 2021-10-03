@@ -76,8 +76,6 @@ set(MAIN_SOURCE
 	common-cpp/fox/counter.cpp
 	common-cpp/fox/gfx/eigen_opengl.hpp
 	common-cpp/fox/gfx/eigen_opengl.cpp
-	common-cpp/fox/gfx/opengl_error_checker.h
-	common-cpp/fox/gfx/opengl_error_checker.c
 	shader2.hpp
 	shader_program2.hpp
 	uniform.hpp
@@ -87,6 +85,12 @@ set(MAIN_SOURCE
 	EpsilonEridaniOpenGL/shader.cpp
 	EpsilonEridaniOpenGL/shader_program.hpp
 	EpsilonEridaniOpenGL/shader_program.cpp
+	EpsilonEridaniOpenGL/check_opengl_error.hpp
+	EpsilonEridaniOpenGL/check_opengl_error.cpp
+	EpsilonEridaniOpenGL/shader_factory.cpp
+	EpsilonEridaniOpenGL/shader_factory.hpp
+	EpsilonEridaniOpenGL/shader_config.hpp
+	shader_configs.xml
 )
 
 set(GLAD_SOURCE
@@ -127,4 +131,5 @@ set(CMAKE_AUTOMOC OFF)
 
 if(MSVC)
 	set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
+	set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DPI_AWARE "PerMonitor")
 endif(MSVC)
