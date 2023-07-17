@@ -242,7 +242,6 @@ void gl_widget::initializeGL()
 
 	std::string shader_config_file = data_root + "/shader_configs.xml";
 	auto& sf = shader_factory::get_instance();
-	/*
 	if(sf.load_config(shader_config_file, data_root))
 	{
 		std::cerr << "Failed to load or parse shader config file!" << std::endl;
@@ -254,7 +253,6 @@ void gl_widget::initializeGL()
 		std::cerr << "Failed to load or parse gfx shaders!" << std::endl;
 		exit(-1);
 	}
-	*/
 
 	trans = { 0.0f, 0.0f, 0.0f };
 	rot = { 0.0f, 0.0f, 0.0f };
